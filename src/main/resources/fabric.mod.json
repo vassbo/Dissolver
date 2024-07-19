@@ -1,0 +1,35 @@
+{
+    "schemaVersion": 1,
+    "id": "vanillaemc",
+    "version": "${version}",
+    "name": "VanillaEMC",
+    "description": "This mod adds EMC to the vanilla game so you can tranmutate learned items.",
+    "authors": ["Vassbo"],
+    "contact": {
+        "homepage": "",
+        "sources": "https://github.com/vassbo/VanillaEMC"
+    },
+    "license": "CC0-1.0",
+    "icon": "assets/vanillaemc/icon.png",
+    "environment": "*",
+    "entrypoints": {
+        "main": ["net.vassbo.vanillaemc.VanillaEMC"],
+        "client": ["net.vassbo.vanillaemc.VanillaEMCClient"]
+    },
+    "mixins": [
+        "vanillaemc.mixins.json",
+        {
+            "config": "vanillaemc.client.mixins.json",
+            "environment": "client"
+        }
+    ],
+    "depends": {
+        "fabricloader": ">=0.15.11",
+        "minecraft": "~1.21",
+        "java": ">=21",
+        "fabric-api": "*"
+    },
+    "suggests": {
+        "another-mod": "*"
+    }
+}
