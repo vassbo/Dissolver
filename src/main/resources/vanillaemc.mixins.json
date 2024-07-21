@@ -3,7 +3,8 @@
 	"package": "net.vassbo.vanillaemc.mixin",
 	"compatibilityLevel": "JAVA_21",
 	"mixins": [
-		"ExampleMixin"
+		"ExampleMixin",
+		"ItemMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

@@ -1,0 +1,16 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "category": "misc",
+    "pattern": [
+        "###",
+        "#S#",
+        "###"
+    ],
+    "key": {
+        "#": { "item": "vanillaemc:magic_item" },
+        "S": { "item": "minecraft:nether_star" }
+    },
+    "result": {
+        "id": "vanillaemc:magic_block"
+    }
+}

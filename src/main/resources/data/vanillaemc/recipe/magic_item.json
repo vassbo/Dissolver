@@ -1,0 +1,16 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "category": "misc",
+    "pattern": [
+        " A ",
+        "ADA",
+        " A "
+    ],
+    "key": {
+        "A": { "item": "minecraft:amethyst_shard" },
+        "D": { "item": "minecraft:diamond" }
+    },
+    "result": {
+        "id": "vanillaemc:magic_item"
+    }
+}

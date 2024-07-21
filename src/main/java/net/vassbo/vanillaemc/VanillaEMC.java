@@ -1,9 +1,16 @@
 package net.vassbo.vanillaemc;
 
-import net.fabricmc.api.ModInitializer;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import net.fabricmc.api.ModInitializer;
+import net.vassbo.vanillaemc.block.ModBlocks;
+import net.vassbo.vanillaemc.command.ModCommands;
+import net.vassbo.vanillaemc.event.BlockBreakEvent;
+import net.vassbo.vanillaemc.event.JoinEvent;
+import net.vassbo.vanillaemc.item.ModItemGroups;
+import net.vassbo.vanillaemc.item.ModItems;
+import net.vassbo.vanillaemc.packets.SyncHandler;
 
 public class VanillaEMC implements ModInitializer {
 	public static final String MOD_ID = "vanillaemc";
@@ -11,10 +18,17 @@ public class VanillaEMC implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		// This code runs as soon as Minecraft is in a mod-load-ready state.
-		// However, some things (like resources) may still be uninitialized.
-		// Proceed with mild caution.
+		LOGGER.info("Initializing VanillaEMC!");
 
-		LOGGER.info("Hello Fabric world!");
+		SyncHandler.init();
+
+        JoinEvent.init();
+		BlockBreakEvent.init();
+		
+		ModCommands.registerCommands();
+
+		ModItemGroups.registerItemGroups();
+		ModItems.registerItems();
+		ModBlocks.registerBlocks();
 	}
 }
