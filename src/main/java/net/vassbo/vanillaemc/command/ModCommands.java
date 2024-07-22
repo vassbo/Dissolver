@@ -104,6 +104,8 @@ public class ModCommands {
             .then(createSubCommandWithPlayerArg("set", "number", IntegerArgumentType.integer(), ChangeEMC::changeEMC, ChangeEMC::changeEMCPlayer))
         );
 
+        // LEARNED (unlock all, learn specific items, unlearn)
+
         // createCustomCommand("openmagic", (context, command) -> {
         //     PlayerEntity player = context.getSource().getPlayer();
         //     Vec3d playerPos = player.getPos();

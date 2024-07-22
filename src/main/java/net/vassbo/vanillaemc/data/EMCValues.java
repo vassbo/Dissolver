@@ -5,17 +5,19 @@ import java.util.HashMap;
 import net.minecraft.text.Text;
 
 public class EMCValues {
-    public static Integer get(String key) {
-        // does this create the data on each call? It should not do that!
-        HashMap<String, Integer> EMC_VALUES = new HashMap<String, Integer>();
-        
-        // auto generate based on crafting recipes!
+    private static final HashMap<String, Integer> EMC_VALUES = new HashMap<String, Integer>();
+
+    public static void init() {
         EMC_VALUES.put("minecraft:stone", 1);
         EMC_VALUES.put("minecraft:dirt", 1);
         EMC_VALUES.put("minecraft:grass_block", 2);
         EMC_VALUES.put("vanillaemc:magic_block", 9000);
         EMC_VALUES.put("vanillaemc:magic_item", 1000);
+        
+        // TODO: auto generate based on crafting recipes!
+    }
 
+    public static Integer get(String key) {
         return EMC_VALUES.getOrDefault(key, 0);
     }
 

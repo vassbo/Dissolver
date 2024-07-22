@@ -7,24 +7,38 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.screen.ScreenHandler;
+import net.minecraft.screen.slot.Slot;
 import net.minecraft.util.collection.DefaultedList;
+import net.vassbo.vanillaemc.VanillaEMC;
+import net.vassbo.vanillaemc.data.EMCValues;
+import net.vassbo.vanillaemc.data.SetEMC;
 
-public class MagicInventory implements Inventory {
+public class MagicInventoryInput implements Inventory {
     private final DefaultedList<ItemStack> stacks;
     private final int width;
     private final int height;
     private final ScreenHandler handler;
+    private PlayerEntity player;
 
-    public MagicInventory(ScreenHandler handler, int width, int height) {
-        this(handler, width, height, DefaultedList.ofSize(width * height, ItemStack.EMPTY));
+    private final int xPos = 0;
+    private final int yPos = 0;
+
+    public MagicInventoryInput(ScreenHandler handler, PlayerEntity player) {
+        this(handler, 1, 1, DefaultedList.ofSize(1, ItemStack.EMPTY));
+        this.player = player;
     }
 
-    public MagicInventory(ScreenHandler handler, int width, int height, DefaultedList<ItemStack> stacks) {
+    public MagicInventoryInput(ScreenHandler handler, int width, int height, DefaultedList<ItemStack> stacks) {
         this.stacks = stacks;
         this.handler = handler;
         this.width = width;
         this.height = height;
+    }
+
+    public Slot getInputSlot() {
+        return new Slot(this, 0, xPos, yPos);
     }
 
     public int size() {
@@ -64,14 +78,30 @@ public class MagicInventory implements Inventory {
     }
 
     public void setStack(int slot, ItemStack stack) {
-        // this.stacks.set(slot, stack);
-        // this.handler.onContentChanged(this);
-        // prevent event!
-    }
+        if (player == null || player.getWorld().isClient()) return;
 
-    public void setVisualStack(int slot, ItemStack stack) {
-        this.stacks.set(slot, stack);
-        this.handler.onContentChanged(this);
+        boolean SLOT_EMPTY = stack.getItem() == Items.AIR;
+        if (SLOT_EMPTY) return;
+
+        String itemId = stack.getItem().toString();
+
+        int emcValue = EMCValues.get(itemId);
+        if (emcValue == 0) {
+            // WIP this will get deleted when closing the block currently!
+            // WIP item is invisible!
+            this.stacks.set(slot, stack);
+            this.handler.onContentChanged(this);
+            VanillaEMC.LOGGER.info("Tried to add item, but it does not have any EMC value. ID: " + itemId);
+            return;
+        }
+
+        int itemCount = stack.getCount();
+        int addedEmcValue = emcValue * itemCount;
+
+        VanillaEMC.LOGGER.info("ADDED STACK!!: " + itemId + " New EMC: " + addedEmcValue);
+        // add block id to array list
+
+        SetEMC.addEMCValue(player, addedEmcValue);
     }
 
     public void markDirty() {

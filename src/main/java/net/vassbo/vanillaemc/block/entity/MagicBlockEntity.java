@@ -7,6 +7,7 @@ import net.minecraft.screen.ScreenHandler;
 import net.minecraft.text.Text;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
+import net.vassbo.vanillaemc.VanillaEMC;
 import net.vassbo.vanillaemc.screen.MagicScreenHandler;
 
 public class MagicBlockEntity extends CustomBlockEntity {
@@ -14,7 +15,7 @@ public class MagicBlockEntity extends CustomBlockEntity {
 
     public MagicBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.MAGIC_BLOCK_ENTITY, pos, state);
-        this.inputStacks = DefaultedList.ofSize(9, ItemStack.EMPTY);
+        this.inputStacks = DefaultedList.ofSize(VanillaEMC.LEARNED_ITEMS.size(), ItemStack.EMPTY);
     }
 
     public ScreenHandler createScreenHandler(int syncId, PlayerInventory playerInventory) {
@@ -34,7 +35,8 @@ public class MagicBlockEntity extends CustomBlockEntity {
     }
 
     public int size() {
-        return 15;
+        // "dynamic" size
+        return 0;
     }
 
     public ItemStack getRenderStack() {

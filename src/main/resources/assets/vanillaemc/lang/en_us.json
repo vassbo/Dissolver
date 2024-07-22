@@ -8,5 +8,7 @@
     "item_tooltip.vanillaemc.default": "A VanillaEMC Item!",
     "item_tooltip.vanillaemc.emc": "§dEMC:§r %d",
     "item_tooltip.vanillaemc.magic_item": "Something magical...",
-    "item_tooltip.vanillaemc.glowing_item": "Shining!"
+    "item_tooltip.vanillaemc.glowing_item": "Shining!",
+
+    "emc.action.not_enough": "You do not have enough EMC!"
 }
