@@ -2,28 +2,45 @@ package net.vassbo.vanillaemc.block;
 
 import org.jetbrains.annotations.Nullable;
 
-import net.minecraft.block.Block;
+import com.mojang.serialization.MapCodec;
+
+import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.BlockWithEntity;
+import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.vassbo.vanillaemc.VanillaEMC;
+import net.vassbo.vanillaemc.block.entity.MagicBlockEntity;
 
-public class MagicBlock extends Block {
-    // private final ViewerCountManager stateManager = new 1(this);
+public class MagicBlock extends BlockWithEntity {
+    public static final MapCodec<MagicBlock> CODEC = createCodec(MagicBlock::new);
 
     public MagicBlock(Settings settings) {
 		super(settings);
 	}
 
     @Override
+    protected MapCodec<MagicBlock> getCodec() {
+        return CODEC;
+    }
+
+    @Override
+    public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+        MagicBlockEntity magicBlockEntity = new MagicBlockEntity(pos, state);
+        return magicBlockEntity;
+    }
+
+    @Override
     public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
+        if (!world.isClient()) return;
+
         // GIVE ADVANCEMENT!
         // WIP this gived double messages!!
         VanillaEMC.LOGGER.info("PLACED!");
@@ -31,37 +48,26 @@ public class MagicBlock extends Block {
     }
 
     @Override
+    protected BlockRenderType getRenderType(BlockState state) {
+        return BlockRenderType.MODEL;
+    }
+
+    @Override
     protected ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
-        VanillaEMC.LOGGER.info("CLICKED!");
-        player.sendMessage(Text.literal("Hello!"));
-        
-        // if (!this.removed && !player.isSpectator()) {
-        //     this.stateManager.openContainer(player, this.getWorld(), this.getPos(), this.getCachedState());
-        // }
-        
-        //This will call the createScreenHandlerFactory method from BlockWithEntity, which will return our blockEntity casted to
-        //a namedScreenHandlerFactory. If your block class does not extend BlockWithEntity, it needs to implement createScreenHandlerFactory.
-        NamedScreenHandlerFactory screenHandlerFactory = state.createScreenHandlerFactory(world, pos);
-        // PlayerInventory playerInventory = "test";
-        // screenHandlerFactory.createMenu(0, playerInventory, player);
+        if (world.isClient) {
+            return ActionResult.SUCCESS;
+        } else if (!player.getAbilities().allowModifyWorld) {
+            return ActionResult.PASS;
+        } else {
+            VanillaEMC.LOGGER.info("OPENING!");
+            player.sendMessage(Text.literal("Use!"));
+            
+            BlockEntity blockEntity = world.getBlockEntity(pos);
+            if (blockEntity instanceof MagicBlockEntity) {
+                player.openHandledScreen((MagicBlockEntity)blockEntity);
+            }
 
-        player.openHandledScreen(screenHandlerFactory);
-
-        return ActionResult.SUCCESS;
-        // if (!player.getAbilities().allowModifyWorld) {
-        //     // Skip if the player isn't allowed to modify the world.
-        //     return ActionResult.PASS;
-        // } else {
-        //     // Get the current value of the "activated" property
-        //     boolean activated = state.get(ACTIVATED);
-
-        //     // Flip the value of activated and save the new blockstate.
-        //     world.setBlockState(pos, state.with(ACTIVATED, !activated));
-
-        //     // Play a click sound to emphasise the interaction.
-        //     world.playSound(player, pos, SoundEvents.BLOCK_COMPARATOR_CLICK, SoundCategory.BLOCKS, 1.0F, 1.0F);
-
-        //     return ActionResult.SUCCESS;
-        // }
+            return ActionResult.CONSUME;
+        }
     }
 }

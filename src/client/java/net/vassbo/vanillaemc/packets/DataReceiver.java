@@ -24,7 +24,7 @@ public class DataReceiver {
     }
 
 	private static void receivedData(PlayerEntity player, List<PayloadData> playerData) {
-		VanillaEMCClient.modPlayerData = playerData;
+		VanillaEMCClient.modPlayerData = playerData.get(0);
 
 		if (playerData.isEmpty()) {
 			player.sendMessage(Text.literal("Empty!"));

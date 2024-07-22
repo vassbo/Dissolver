@@ -1,6 +1,5 @@
 package net.vassbo.vanillaemc.data;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -8,6 +7,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.PlayerManager;
 import net.minecraft.world.PersistentState;
 import net.minecraft.world.PersistentStateManager;
 import net.minecraft.world.World;
@@ -119,6 +119,15 @@ public class StateSaverAndLoader extends PersistentState {
         return playerState;
     }
 
+    public static void setPlayerEMC(LivingEntity player, int emc) {
+        StateSaverAndLoader serverState = getServerState(player.getWorld().getServer());
+
+        PlayerData playerState = serverState.players.computeIfAbsent(player.getUuid(), uuid -> new PlayerData());
+        playerState.emc = emc;
+
+        serverState.players.put(player.getUuid(), playerState);
+    }
+
     public static PlayerData getFromUuid(MinecraftServer server, UUID uuid) {
         StateSaverAndLoader serverState = getServerState(server);
         PlayerData playerState = serverState.players.getOrDefault(uuid, null);
@@ -126,10 +135,22 @@ public class StateSaverAndLoader extends PersistentState {
         return playerState;
     }
 
-    public static Collection<PlayerData> getFullList(MinecraftServer server) {
+    public static HashMap<String, PlayerData> getFullList(MinecraftServer server) {
         StateSaverAndLoader serverState = getServerState(server);
-        Collection<PlayerData> dataList = serverState.players.values();
+        // Collection<PlayerData> dataList = serverState.players;
 
-        return dataList;
+        PlayerManager playerManager = server.getPlayerManager();
+        HashMap<String, PlayerData> playersData = new HashMap<>();
+
+        serverState.players.forEach((uuid, data) -> {
+            VanillaEMC.LOGGER.info("NAME1: " + playerManager.getPlayer(uuid).getDisplayName());
+            VanillaEMC.LOGGER.info("NAME2: " + playerManager.getPlayer(uuid).getDisplayName().getLiteralString());
+            VanillaEMC.LOGGER.info("NAME3: " + playerManager.getPlayer(uuid).getDisplayName().getString());
+            VanillaEMC.LOGGER.info("NAME4: " + playerManager.getPlayer(uuid).getDisplayName().toString());
+            String playerName = playerManager.getPlayer(uuid).getDisplayName().getString();
+            playersData.put(playerName, data);
+        });
+
+        return playersData;
     }
 }

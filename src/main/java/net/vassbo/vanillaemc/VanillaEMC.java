@@ -5,12 +5,14 @@ import org.slf4j.LoggerFactory;
 
 import net.fabricmc.api.ModInitializer;
 import net.vassbo.vanillaemc.block.ModBlocks;
+import net.vassbo.vanillaemc.block.entity.ModBlockEntities;
 import net.vassbo.vanillaemc.command.ModCommands;
 import net.vassbo.vanillaemc.event.BlockBreakEvent;
 import net.vassbo.vanillaemc.event.JoinEvent;
 import net.vassbo.vanillaemc.item.ModItemGroups;
 import net.vassbo.vanillaemc.item.ModItems;
 import net.vassbo.vanillaemc.packets.SyncHandler;
+import net.vassbo.vanillaemc.screen.ModScreenHandlers;
 
 public class VanillaEMC implements ModInitializer {
 	public static final String MOD_ID = "vanillaemc";
@@ -30,5 +32,8 @@ public class VanillaEMC implements ModInitializer {
 		ModItemGroups.registerItemGroups();
 		ModItems.registerItems();
 		ModBlocks.registerBlocks();
+
+		ModBlockEntities.registerBlockEntities();
+		ModScreenHandlers.registerScreenHandlers();
 	}
 }
