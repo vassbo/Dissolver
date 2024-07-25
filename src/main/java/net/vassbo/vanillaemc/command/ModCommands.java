@@ -13,6 +13,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.minecraft.command.argument.ItemStackArgumentType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
@@ -35,6 +36,10 @@ public class ModCommands {
 
     private static LiteralArgumentBuilder<ServerCommandSource> createRootCommand(String command) {
         return literal(command).requires(source -> source.hasPermissionLevel(2)); // requires OP
+    }
+
+    private static LiteralArgumentBuilder<ServerCommandSource> createCommandWithPlayerArg(String command, ArgumentType<?> argType, CommandMethodInterface func, CommandMethodPlayerInterface playerFunc) {
+        return literal(command).executes((context) -> executeCommand(context, command, func)).then(argument("player", StringArgumentType.string()).executes((context) -> executePlayerCommand(context, command, playerFunc)));
     }
 
     private static LiteralArgumentBuilder<ServerCommandSource> createSubCommand(String command, String argId, ArgumentType<?> argType, CommandMethodInterface func) {
@@ -105,6 +110,13 @@ public class ModCommands {
         );
 
         // LEARNED (unlock all, learn specific items, unlearn)
+        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> dispatcher.register(
+            createRootCommand("learn")
+            .then(createCommandWithPlayerArg("everything", ItemStackArgumentType.itemStack(registryAccess), LearnItems::everything, LearnItems::everythingPlayer))
+            .then(createCommandWithPlayerArg("forgetall", ItemStackArgumentType.itemStack(registryAccess), LearnItems::forget, LearnItems::forgetPlayer))
+            .then(createSubCommandWithPlayerArg("add", "item", ItemStackArgumentType.itemStack(registryAccess), LearnItems::add, LearnItems::addPlayer))
+            .then(createSubCommandWithPlayerArg("remove", "item", ItemStackArgumentType.itemStack(registryAccess), LearnItems::remove, LearnItems::removePlayer))
+        ));
 
         // createCustomCommand("openmagic", (context, command) -> {
         //     PlayerEntity player = context.getSource().getPlayer();

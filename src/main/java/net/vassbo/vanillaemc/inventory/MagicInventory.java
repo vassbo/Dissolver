@@ -64,12 +64,6 @@ public class MagicInventory implements Inventory {
     }
 
     public void setStack(int slot, ItemStack stack) {
-        // this.stacks.set(slot, stack);
-        // this.handler.onContentChanged(this);
-        // prevent event!
-    }
-
-    public void setVisualStack(int slot, ItemStack stack) {
         this.stacks.set(slot, stack);
         this.handler.onContentChanged(this);
     }

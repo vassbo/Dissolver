@@ -16,7 +16,6 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.vassbo.vanillaemc.VanillaEMC;
 import net.vassbo.vanillaemc.block.entity.MagicBlockEntity;
 
 public class MagicBlock extends BlockWithEntity {
@@ -42,8 +41,6 @@ public class MagicBlock extends BlockWithEntity {
         if (!world.isClient()) return;
 
         // GIVE ADVANCEMENT!
-        // WIP this gived double messages!!
-        VanillaEMC.LOGGER.info("PLACED!");
         placer.sendMessage(Text.literal("Well done!"));
     }
 
@@ -59,9 +56,6 @@ public class MagicBlock extends BlockWithEntity {
         } else if (!player.getAbilities().allowModifyWorld) {
             return ActionResult.PASS;
         } else {
-            VanillaEMC.LOGGER.info("OPENING!");
-            player.sendMessage(Text.literal("Use!"));
-            
             BlockEntity blockEntity = world.getBlockEntity(pos);
             if (blockEntity instanceof MagicBlockEntity) {
                 player.openHandledScreen((MagicBlockEntity)blockEntity);

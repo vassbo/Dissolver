@@ -22,7 +22,7 @@ public record PayloadData(int emc) {
     }
 
     private static List<PayloadData> listPlayerData(List<PayloadData> data, PlayerData playerData) {
-        data.add(new PayloadData(playerData.emc));
+        data.add(new PayloadData(playerData.EMC));
 
         return data;
     }

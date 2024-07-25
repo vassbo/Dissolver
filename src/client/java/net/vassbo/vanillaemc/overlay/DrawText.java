@@ -31,8 +31,7 @@ public class DrawText {
 
 			TextRenderer renderer = client.textRenderer;
 			
-            int emc = 0;
-            if (VanillaEMCClient.modPlayerData != null) emc = VanillaEMCClient.modPlayerData.emc();
+            int emc = VanillaEMCClient.getEMCValue();
 
 			context.drawText(renderer, "EMC: §6" + emc, color, targetColor, lerpedColor, false);
 

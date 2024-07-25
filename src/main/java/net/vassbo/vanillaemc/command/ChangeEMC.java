@@ -14,6 +14,7 @@ import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.vassbo.vanillaemc.data.PlayerData;
 import net.vassbo.vanillaemc.data.StateSaverAndLoader;
+import net.vassbo.vanillaemc.helpers.EMCHelper;
 
 public class ChangeEMC {
     public static int changeEMC(CommandContext<ServerCommandSource> context, String command) {
@@ -34,7 +35,7 @@ public class ChangeEMC {
     }
 
     public static void updateEMCValue(PlayerEntity player, String key, CommandContext<ServerCommandSource> context, int inputValue) {
-        int currentValue = StateSaverAndLoader.getPlayerState(player).emc;
+        int currentValue = EMCHelper.getEMCValue(player);
 
         if (key == "give") {
             currentValue += inputValue;
@@ -47,12 +48,12 @@ public class ChangeEMC {
             ModCommands.feedback(context, "Set user EMC to §6" + currentValue);
         }
         
-        StateSaverAndLoader.setPlayerEMC(player, currentValue);
+        EMCHelper.setEMCValue(player, currentValue);
     }
 
     public static int listUserEMC(CommandContext<ServerCommandSource> context, String command) {
         PlayerEntity player = context.getSource().getPlayer();
-        int currentEMC = StateSaverAndLoader.getPlayerState(player).emc;
+        int currentEMC = EMCHelper.getEMCValue(player);
 
         ModCommands.feedback(context, "You currently have §6" + currentEMC + "§r EMC!");
         return 1;
@@ -70,7 +71,7 @@ public class ChangeEMC {
 
         PlayerData data = StateSaverAndLoader.getFromUuid(server, player.getUuid());
 
-        ModCommands.feedback(context, "EMC of player: §6" + data.emc);
+        ModCommands.feedback(context, "EMC of player: §6" + data.EMC);
         return 1;
     }
 
@@ -82,7 +83,7 @@ public class ChangeEMC {
         String msg = "§lFull list:§r\n" +
         dataList.entrySet()
         .stream()
-        .map(a -> "- " + a.getKey() + ": §6" + a.getValue().emc + "§r")
+        .map(a -> "- " + a.getKey() + ": §6" + a.getValue().EMC + "§r")
         .collect(joining("\n"));
 
         ModCommands.feedback(context, msg);

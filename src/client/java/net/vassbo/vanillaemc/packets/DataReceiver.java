@@ -31,6 +31,6 @@ public class DataReceiver {
 			return;
 		}
 
-		player.sendMessage(Text.literal("Current EMC: §6" + playerData.get(0).emc()));
+		// player.sendMessage(Text.literal("Current EMC: §6" + playerData.get(0).emc()));
 	}
 }

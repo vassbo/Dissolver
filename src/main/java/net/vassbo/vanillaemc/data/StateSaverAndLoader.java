@@ -1,9 +1,12 @@
 package net.vassbo.vanillaemc.data;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.MinecraftServer;
@@ -12,6 +15,7 @@ import net.minecraft.world.PersistentState;
 import net.minecraft.world.PersistentStateManager;
 import net.minecraft.world.World;
 import net.vassbo.vanillaemc.VanillaEMC;
+import net.vassbo.vanillaemc.helpers.EMCHelper;
 
 // https://fabricmc.net/wiki/tutorial:persistent_states#player_specific_persistent_state
 public class StateSaverAndLoader extends PersistentState {
@@ -19,13 +23,43 @@ public class StateSaverAndLoader extends PersistentState {
     public HashMap<UUID, PlayerData> players = new HashMap<>();
 
     private static NbtCompound storeData(NbtCompound playerNbt, PlayerData playerData) {
-        playerNbt.putInt("emc", playerData.emc);
+        playerNbt.putInt("EMC", playerData.EMC);
+        playerNbt = storeList(playerNbt, "LEARNED_ITEMS", playerData.LEARNED_ITEMS);
+
         return playerNbt;
     }
 
     private static PlayerData getData(NbtCompound playerNbt, PlayerData playerData) {
-        playerData.emc = playerNbt.getInt("emc");
+        playerData.EMC = playerNbt.getInt("EMC");
+        playerData.LEARNED_ITEMS = getList(playerNbt, "LEARNED_ITEMS");
+
         return playerData;
+    }
+
+    // STRING LISTS
+
+    private static NbtCompound storeList(NbtCompound playerNbt, String key, List<String> list) {
+        int listLength = list.size();
+        playerNbt.putInt(key + "_SIZE", listLength);
+
+        int index = -1;
+        for (String value : list) {
+            index++;
+            playerNbt.putString(key + ":" + index, value);
+        };
+
+        return playerNbt;
+    }
+
+    private static List<String> getList(NbtCompound playerNbt, String key) {
+        int listLength = playerNbt.getInt(key + "_SIZE");
+        List<String> list = new ArrayList<>();
+
+        for (int i = 0; i < listLength; i++) {
+            list.add(playerNbt.getString(key + ":" + i));
+        }
+
+        return list;
     }
 
     // STORE DATA
@@ -119,13 +153,32 @@ public class StateSaverAndLoader extends PersistentState {
         return playerState;
     }
 
-    public static void setPlayerEMC(LivingEntity player, int emc) {
-        StateSaverAndLoader serverState = getServerState(player.getWorld().getServer());
+    private static StateSaverAndLoader getSaver(LivingEntity player) {
+        return getServerState(player.getWorld().getServer());
+    }
 
-        PlayerData playerState = serverState.players.computeIfAbsent(player.getUuid(), uuid -> new PlayerData());
-        playerState.emc = emc;
+    private static PlayerData getPlayerState(LivingEntity player, StateSaverAndLoader serverState) {
+        return serverState.players.computeIfAbsent(player.getUuid(), uuid -> new PlayerData());
+    }
+
+    public static void setPlayerEMC(LivingEntity player, int emc) {
+        StateSaverAndLoader serverState = getSaver(player);
+        PlayerData playerState = getPlayerState(player, serverState);
+        
+        playerState.EMC = emc;
+        
+        serverState.players.put(player.getUuid(), playerState);
+        EMCHelper.sendStateToClient((PlayerEntity)player);
+    }
+
+    public static void setPlayerLearned(LivingEntity player, List<String> learnedList) {
+        StateSaverAndLoader serverState = getSaver(player);
+        PlayerData playerState = getPlayerState(player, serverState);
+
+        playerState.LEARNED_ITEMS = learnedList;
 
         serverState.players.put(player.getUuid(), playerState);
+        EMCHelper.sendStateToClient((PlayerEntity)player);
     }
 
     public static PlayerData getFromUuid(MinecraftServer server, UUID uuid) {
@@ -137,16 +190,10 @@ public class StateSaverAndLoader extends PersistentState {
 
     public static HashMap<String, PlayerData> getFullList(MinecraftServer server) {
         StateSaverAndLoader serverState = getServerState(server);
-        // Collection<PlayerData> dataList = serverState.players;
-
         PlayerManager playerManager = server.getPlayerManager();
         HashMap<String, PlayerData> playersData = new HashMap<>();
 
         serverState.players.forEach((uuid, data) -> {
-            VanillaEMC.LOGGER.info("NAME1: " + playerManager.getPlayer(uuid).getDisplayName());
-            VanillaEMC.LOGGER.info("NAME2: " + playerManager.getPlayer(uuid).getDisplayName().getLiteralString());
-            VanillaEMC.LOGGER.info("NAME3: " + playerManager.getPlayer(uuid).getDisplayName().getString());
-            VanillaEMC.LOGGER.info("NAME4: " + playerManager.getPlayer(uuid).getDisplayName().toString());
             String playerName = playerManager.getPlayer(uuid).getDisplayName().getString();
             playersData.put(playerName, data);
         });

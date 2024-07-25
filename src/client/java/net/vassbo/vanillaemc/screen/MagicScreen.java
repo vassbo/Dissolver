@@ -9,6 +9,7 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.vassbo.vanillaemc.VanillaEMC;
+import net.vassbo.vanillaemc.VanillaEMCClient;
 
 public class MagicScreen extends HandledScreen<MagicScreenHandler> {
     private static final Identifier TEXTURE = Identifier.of(VanillaEMC.MOD_ID, "textures/gui/magic_block_gui.png");
@@ -20,8 +21,9 @@ public class MagicScreen extends HandledScreen<MagicScreenHandler> {
     @Override
     protected void init() {
         super.init();
-        titleY = 1000;
-        playerInventoryTitleY = 1000;
+        // titleY = 1000;
+        // playerInventoryTitleY = 1000;
+        this.titleX = (this.backgroundWidth - this.textRenderer.getWidth(this.title)) / 2;
     }
 
     @Override
@@ -33,14 +35,6 @@ public class MagicScreen extends HandledScreen<MagicScreenHandler> {
         int y = (height - backgroundHeight) / 2;
 
         context.drawTexture(TEXTURE, x, y, 0, 0, backgroundWidth, backgroundHeight);
-
-        renderProgressArrow(context, x, y);
-    }
-
-    private void renderProgressArrow(DrawContext context, int x, int y) {
-        // if(handler.isCrafting()) {
-        //     context.drawTexture(TEXTURE, x + 85, y + 30, 176, 0, 8, handler.getScaledProgress());
-        // }
     }
 
     @Override
@@ -48,5 +42,18 @@ public class MagicScreen extends HandledScreen<MagicScreenHandler> {
         renderBackground(context, mouseX, mouseY, delta);
         super.render(context, mouseX, mouseY, delta);
         drawMouseoverTooltip(context, mouseX, mouseY);
+    }
+
+    @Override
+    protected void drawForeground(DrawContext context, int mouseX, int mouseY) {
+        context.drawText(this.textRenderer, this.title, this.titleX, this.titleY, 4210752, false);
+        context.drawText(this.textRenderer, this.playerInventoryTitle, this.playerInventoryTitleX, this.playerInventoryTitleY, 4210752, false);
+
+        renderText(context, this.titleX, this.titleY + 15);
+    }
+
+    private void renderText(DrawContext context, int x, int y) {
+        int emc = VanillaEMCClient.getEMCValue();
+        context.drawText(this.textRenderer, "EMC: §6" + emc, x, y, 4210752, false);
     }
 }
