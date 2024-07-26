@@ -22,6 +22,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeManager;
+import net.minecraft.recipe.RecipeType;
 import net.minecraft.registry.RegistryOps;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.resource.ResourceManager;
@@ -60,18 +61,40 @@ public class RecipeManagerMixin {
         String resultId = resultItem.getItem().toString();
         int resultCount = resultItem.getCount();
 
+        // smelting armor/tools will give nuggets - that should not be the same emc value!!
+        if ((recipe.getType() == RecipeType.SMELTING || recipe.getType() == RecipeType.BLASTING) && resultId.contains("nugget")) return;
+
         List<String> INGREDIENTS = new ArrayList<>();
         for (Ingredient ingredient : recipe.getIngredients()) {
-            // mostly just one ingredient (per slot)
+            // mostly just one ingredient (per slot) - but e.g. stone cutter can have multiple!
+            int index = -1;
             for (int rawId : ingredient.getMatchingItemIds()) {
-                INGREDIENTS.add(Item.byRawId(rawId).toString());
+                String itemId = Item.byRawId(rawId).toString();
+                index++;
+
+                // use this to debug items having weird multiple emc values!
+                // if (resultId.contains("item_id")) VanillaEMC.LOGGER.info("Found " + itemId   + " with the type " + recipe.getType());
+
+                if (index == 0) {
+                    INGREDIENTS.add(itemId);
+                } else {
+                    List<String> INGREDIENT = new ArrayList<>();
+                    INGREDIENT.add(itemId);
+                    addRecipe(resultId + "__" + 1, INGREDIENT);
+                }
             }
         }
 
+        addRecipe(resultId + "__" + resultCount, INGREDIENTS);
+    }
+
+    private static void addRecipe(String id, List<String> INGREDIENTS) {
         // multiple recipes for same output
         int index = 1;
-        while (RECIPES.containsKey(resultId + "__" + resultCount + "__" + index)) index++;
+        while (RECIPES.containsKey(id + "__" + index)) {
+            index++;
+        }
 
-        RECIPES.put(resultId + "__" + resultCount + "__" + index, INGREDIENTS);
+        RECIPES.put(id + "__" + index, INGREDIENTS);
     }
 }
