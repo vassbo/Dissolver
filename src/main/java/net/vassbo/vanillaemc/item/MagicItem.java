@@ -7,7 +7,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
-import net.vassbo.vanillaemc.data.EMCValues;
+import net.vassbo.vanillaemc.helpers.EMCHelper;
 
 public class MagicItem extends Item {
     private static String TOOLTIP_TEXT = "item_tooltip.vanillaemc.magic_item";
@@ -23,7 +23,7 @@ public class MagicItem extends Item {
 
         // add emc value
         String itemId = stack.getItem().toString(); // vanillaemc:magic_item
-        Text formattedText = EMCValues.tooltipValue(itemId);
+        Text formattedText = EMCHelper.tooltipValue(itemId);
         if (!"".equals(formattedText.getLiteralString())) tooltip.add(formattedText);
     }
 }

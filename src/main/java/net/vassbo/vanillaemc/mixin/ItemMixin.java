@@ -12,7 +12,7 @@ import net.minecraft.item.Item.TooltipContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.text.Text;
-import net.vassbo.vanillaemc.data.EMCValues;
+import net.vassbo.vanillaemc.helpers.EMCHelper;
 
 @Mixin(Item.class)
 public class ItemMixin {
@@ -31,7 +31,7 @@ public class ItemMixin {
         // VanillaEMC.LOGGER.info("ITEM ID: " + itemId);
 
         // add emc value
-        Text formattedText = EMCValues.tooltipValue(itemId);
+        Text formattedText = EMCHelper.tooltipValue(itemId);
         if (!"".equals(formattedText.getLiteralString())) tooltip.add(formattedText);
 
         // if (stack.nbt != null) {

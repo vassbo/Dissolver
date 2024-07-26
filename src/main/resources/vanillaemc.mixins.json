@@ -4,7 +4,9 @@
 	"compatibilityLevel": "JAVA_21",
 	"mixins": [
 		"ExampleMixin",
-		"ItemMixin"
+		"ItemMixin",
+		"RecipeManagerMixin",
+		"TagManagerLoaderMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

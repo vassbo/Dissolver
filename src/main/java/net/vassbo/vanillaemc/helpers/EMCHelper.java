@@ -177,6 +177,16 @@ public class EMCHelper {
     // global data
     // StateSaverAndLoader serverState = StateSaverAndLoader.getServerState(world.getServer());
 
+    // TOOLTIP
+
+    public static Text tooltipValue(String key) {
+        Integer EMC = EMCValues.get(key);
+        Text text = Text.literal("");
+        if (EMC == 0) return text;
+
+        return Text.translatable("item_tooltip.vanillaemc.emc", EMC);
+    }
+
     // HELPERS
 
     private static void wait(int ms) {

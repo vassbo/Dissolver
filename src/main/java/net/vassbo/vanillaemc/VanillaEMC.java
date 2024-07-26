@@ -22,6 +22,7 @@ public class VanillaEMC implements ModInitializer {
 	public void onInitialize() {
 		LOGGER.info("Initializing VanillaEMC!");
 
+		// ServerLifecycleEvents.SERVER_STARTING.register((server) -> {});
 		EMCValues.init();
 
 		SyncHandler.init();

@@ -16,7 +16,7 @@ import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Position;
 import net.minecraft.world.World;
-import net.vassbo.vanillaemc.data.EMCValues;
+import net.vassbo.vanillaemc.helpers.EMCHelper;
 
 public class GlowingItem extends ExperienceBottleItem {
     private static String TOOLTIP_TEXT = "item_tooltip.vanillaemc.glowing_item";
@@ -44,7 +44,7 @@ public class GlowingItem extends ExperienceBottleItem {
 
         // add emc value
         String itemId = stack.getItem().toString(); // vanillaemc:magic_item
-        Text formattedText = EMCValues.tooltipValue(itemId);
+        Text formattedText = EMCHelper.tooltipValue(itemId);
         if (!"".equals(formattedText.getLiteralString())) tooltip.add(formattedText);
     }
 
