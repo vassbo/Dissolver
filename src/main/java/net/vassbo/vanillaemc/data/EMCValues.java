@@ -297,6 +297,7 @@ public class EMCValues {
         // EMC_VALUES.put("minecraft:potion", 800);
         // EMC_VALUES.put("minecraft:splash_potion", 800);
         // EMC_VALUES.put("minecraft:lingering_potion", 800);
+        // water bottle
         // banner pattern
         // EMC_VALUES.put("minecraft:flow_banner_pattern", 300);
         // EMC_VALUES.put("minecraft:guster_banner_pattern", 300);

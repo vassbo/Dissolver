@@ -7,6 +7,7 @@ import net.minecraft.screen.ScreenHandler;
 import net.minecraft.text.Text;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
+import net.vassbo.vanillaemc.VanillaEMC;
 import net.vassbo.vanillaemc.screen.MagicScreenHandler;
 
 public class MagicBlockEntity extends CustomBlockEntity {
@@ -19,7 +20,10 @@ public class MagicBlockEntity extends CustomBlockEntity {
     }
 
     public ScreenHandler createScreenHandler(int syncId, PlayerInventory playerInventory) {
-        return new MagicScreenHandler(syncId, playerInventory); // , this
+        // return ModScreenHandlers.MAGIC_SCREEN_HANDLER;
+        MagicScreenHandler handler = new MagicScreenHandler(syncId, playerInventory); // , this
+        VanillaEMC.activeHandlers.put(playerInventory.player.getUuid(), handler);
+        return handler;
     }
 
     protected void setHeldStacks(DefaultedList<ItemStack> inventory) {

@@ -5,7 +5,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.util.math.ColorHelper;
 import net.minecraft.util.math.MathHelper;
-import net.vassbo.vanillaemc.VanillaEMCClient;
+import net.vassbo.vanillaemc.data.PlayerDataClient;
 
 public class DrawText {
 	private float totalTickDelta = 0.0F;
@@ -31,7 +31,7 @@ public class DrawText {
 
 			TextRenderer renderer = client.textRenderer;
 			
-            int emc = VanillaEMCClient.getEMCValue();
+            int emc = PlayerDataClient.EMC;
 
 			context.drawText(renderer, "EMC: §6" + emc, color, targetColor, lerpedColor, false);
 

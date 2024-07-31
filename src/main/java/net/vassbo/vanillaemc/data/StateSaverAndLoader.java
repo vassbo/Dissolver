@@ -145,16 +145,17 @@ public class StateSaverAndLoader extends PersistentState {
     }
 
     public static PlayerData getPlayerState(LivingEntity player) {
-        StateSaverAndLoader serverState = getServerState(player.getWorld().getServer());
+        if (player.getServer() == null) return new PlayerData();
 
         // Either get the player by the uuid, or we don't have data for him yet, make a new player state
-        PlayerData playerState = serverState.players.computeIfAbsent(player.getUuid(), uuid -> new PlayerData());
+        PlayerData playerState = getPlayerState(player, getSaver(player));
 
         return playerState;
     }
 
     private static StateSaverAndLoader getSaver(LivingEntity player) {
-        return getServerState(player.getWorld().getServer());
+        MinecraftServer server = player.getServer();
+        return getServerState(server);
     }
 
     private static PlayerData getPlayerState(LivingEntity player, StateSaverAndLoader serverState) {
@@ -162,6 +163,8 @@ public class StateSaverAndLoader extends PersistentState {
     }
 
     public static void setPlayerEMC(LivingEntity player, int emc) {
+        if (player.getServer() == null) return;
+
         StateSaverAndLoader serverState = getSaver(player);
         PlayerData playerState = getPlayerState(player, serverState);
         
@@ -172,6 +175,8 @@ public class StateSaverAndLoader extends PersistentState {
     }
 
     public static void setPlayerLearned(LivingEntity player, List<String> learnedList) {
+        if (player.getServer() == null) return;
+
         StateSaverAndLoader serverState = getSaver(player);
         PlayerData playerState = getPlayerState(player, serverState);
 

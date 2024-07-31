@@ -1,21 +1,17 @@
 package net.vassbo.vanillaemc.helpers;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.vassbo.vanillaemc.VanillaEMC;
 import net.vassbo.vanillaemc.data.EMCValues;
 import net.vassbo.vanillaemc.data.PlayerData;
 import net.vassbo.vanillaemc.data.StateSaverAndLoader;
-import net.vassbo.vanillaemc.packets.PayloadData;
-import net.vassbo.vanillaemc.packets.SyncHandler;
-import net.vassbo.vanillaemc.packets.SyncHandler.SyncPayload;
+import net.vassbo.vanillaemc.packets.DataSender;
 import net.vassbo.vanillaemc.screen.MagicScreenHandler;
 
 public class EMCHelper {
@@ -61,20 +57,14 @@ public class EMCHelper {
 
     // GET
 
-    public static boolean getItem(PlayerEntity player, ItemStack itemStack, MagicScreenHandler handler) {
-        return getItem(player, itemStack, handler, false);
-    }
-
-    public static boolean getItem(PlayerEntity player, ItemStack itemStack, MagicScreenHandler handler, boolean fullStack) {
+    public static boolean getItem(PlayerEntity player, ItemStack itemStack, MagicScreenHandler handler, int items) {
         String itemId = itemStack.getItem().toString();
-        int stackCount = itemStack.getCount();
-
-        int emcValue = EMCValues.get(itemId) * stackCount;
+        int emcValue = EMCValues.get(itemId) * items;
 
         if (!checkValidEMC(emcValue, itemId, Action.GET)) return false;
 
         if (!EMCHelper.removeEMCValue(player, emcValue)) {
-            player.sendMessage(Text.translatable("emc.action.not_enough"));
+            sendMessageToClient(player, "emc.action.not_enough_short");
             return false;
         }
 
@@ -127,9 +117,7 @@ public class EMCHelper {
         List<String> learnedList = StateSaverAndLoader.getPlayerState(player).LEARNED_ITEMS;
         if (learnedList.contains(itemId)) return;
 
-        // WIP show message in gui about new item!!
-        Item item = ItemHelper.getById(itemId);
-        player.sendMessage(Text.literal("Learned new item: " + ItemHelper.getName(item)));
+        sendMessageToClient(player, "emc.action.learned_short");
 
         learnedList.add(itemId);
         StateSaverAndLoader.setPlayerLearned(player, learnedList);
@@ -161,17 +149,31 @@ public class EMCHelper {
 
     public static void sendStateToClient(PlayerEntity player) {
         PlayerData playerState = StateSaverAndLoader.getPlayerState(player);
+        DataSender.sendPlayerData(player, playerState);
+    }
+    
+    private static final HashMap<String, Integer> TIMEOUT_IDs = new HashMap<String, Integer>();
+    public static void sendMessageToClient(PlayerEntity player, String message) {
+        PlayerData playerState = StateSaverAndLoader.getPlayerState(player);
+        playerState.MESSAGE = message;
+        DataSender.sendPlayerData(player, playerState);
 
-        MinecraftServer server = player.getServer();
-        ServerPlayerEntity playerEntity = server.getPlayerManager().getPlayer(player.getUuid());
-        if (playerEntity == null || !(player instanceof PlayerEntity)) return;
+        String playerId = player.getUuid().toString();
+        if (!TIMEOUT_IDs.containsKey(playerId)) TIMEOUT_IDs.put(playerId, 0);
+        int currentId = TIMEOUT_IDs.get(playerId) + 1;
+        TIMEOUT_IDs.put(playerId, currentId);
 
-        List<PayloadData> dataToSend = PayloadData.create(playerState);
-        SyncPayload payload = new SyncPayload(dataToSend);
+        // timeout message
+        new Thread(() -> {
+            wait(1200);
 
-        server.execute(() -> {
-            SyncHandler.send(playerEntity, payload);
-        });
+            // another message was sent before this could clear!
+            if (TIMEOUT_IDs.get(playerId) != currentId) return;
+
+            PlayerData playerStateNew = StateSaverAndLoader.getPlayerState(player);
+            playerStateNew.MESSAGE = "";
+            DataSender.sendPlayerData(player, playerStateNew);
+        }).start();
     }
 
     // global data

@@ -6,4 +6,8 @@ import java.util.List;
 public class PlayerData {
     public int EMC = 0;
     public List<String> LEARNED_ITEMS = new ArrayList<>();
+
+    // not stored
+    // public int learnedItemsSize = 0;
+    public String MESSAGE = "";
 }

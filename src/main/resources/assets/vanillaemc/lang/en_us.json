@@ -10,5 +10,8 @@
     "item_tooltip.vanillaemc.magic_item": "Something magical...",
     "item_tooltip.vanillaemc.glowing_item": "Shining!",
 
-    "emc.action.not_enough": "You do not have enough EMC!"
+    "emc.title": "EMC: §6%d",
+    "emc.action.not_enough": "You do not have enough EMC!",
+    "emc.action.not_enough_short": "§cNot enough!",
+    "emc.action.learned_short": "§aLearned!"
 }

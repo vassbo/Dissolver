@@ -10,7 +10,7 @@ import net.vassbo.vanillaemc.VanillaEMC;
 public class ModScreenHandlers {
     private static final ScreenHandlerType<MagicScreenHandler> MAGIC_SCREEN = new ScreenHandlerType<>((syncId, playerInventory) -> new MagicScreenHandler(syncId, playerInventory), FeatureFlags.VANILLA_FEATURES);
     
-    public static final ScreenHandlerType<MagicScreenHandler> MAGIC_SCREEN_HANDLER = Registry.register(Registries.SCREEN_HANDLER, Identifier.of(VanillaEMC.MOD_ID, "magic_screen_handler"), MAGIC_SCREEN);
+    public static final ScreenHandlerType<MagicScreenHandler> MAGIC_SCREEN_HANDLER_TYPE = Registry.register(Registries.SCREEN_HANDLER, Identifier.of(VanillaEMC.MOD_ID, "magic_screen_handler"), MAGIC_SCREEN);
 
     public static void registerScreenHandlers() {
     }

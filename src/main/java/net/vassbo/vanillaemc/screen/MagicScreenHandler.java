@@ -13,24 +13,29 @@ import net.minecraft.item.Items;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.vassbo.vanillaemc.data.EMCValues;
+import net.vassbo.vanillaemc.data.PlayerData;
 import net.vassbo.vanillaemc.data.StateSaverAndLoader;
-import net.vassbo.vanillaemc.helpers.ItemHelper;
 import net.vassbo.vanillaemc.helpers.EMCHelper;
+import net.vassbo.vanillaemc.helpers.ItemHelper;
 import net.vassbo.vanillaemc.inventory.MagicInventory;
 import net.vassbo.vanillaemc.inventory.MagicInventoryInput;
 import net.vassbo.vanillaemc.inventory.MagicSlot;
+import net.vassbo.vanillaemc.packets.DataSender;
 
 public class MagicScreenHandler extends ScreenHandler {
-    private final int WIDTH_SIZE = 5;
-    private final int HEIGHT_SIZE = 5;
+    private final int WIDTH_SIZE = 9;
+    private final int HEIGHT_SIZE = 6;
+    public final int CUSTOM_INV_SIZE = WIDTH_SIZE * HEIGHT_SIZE;
     private final int PLAYER_INV_SIZE = 36; // player inventory size (9 * 4)
     private final PlayerEntity player;
 
     private final MagicInventory inventory;
     private final MagicInventoryInput inventoryInput;
 
+    public List<Item> itemList = new ArrayList<>();
+
     public MagicScreenHandler(int syncId, PlayerInventory playerInventory) {
-        super(ModScreenHandlers.MAGIC_SCREEN_HANDLER, syncId);
+        super(ModScreenHandlers.MAGIC_SCREEN_HANDLER_TYPE, syncId);
 
         this.player = playerInventory.player;
 
@@ -54,15 +59,13 @@ public class MagicScreenHandler extends ScreenHandler {
     }
 
     private int DEFAULT_SLOT_SIZE = 18;
-    private int START_X_POS = 45;
-    private int START_Y_POS = 20;
+    private int START_X_POS = 31;
+    private int START_Y_POS = 36;
     private void addSlots(MagicInventory inventory) {
-        int MAX_SIZE = WIDTH_SIZE * HEIGHT_SIZE;
-
         int xIndex = -1;
         int yIndex = -1;
         int index = -1;
-        for (int i = 0; i < MAX_SIZE; i++) {
+        for (int i = 0; i < CUSTOM_INV_SIZE; i++) {
             xIndex++;
             if (xIndex >= WIDTH_SIZE) {
                 xIndex = 0;
@@ -82,10 +85,18 @@ public class MagicScreenHandler extends ScreenHandler {
     }
 
     private void addItems() {
-        if (player.getServer() == null) return;
+        // if (player.getServer() == null) return; // only server
 
-        List<Item> ITEMS = filterItems();
+        List<Item> FILTERED = filterItems();
+        itemList = new ArrayList<Item>(FILTERED);
+
+        List<Item> ITEMS = searchFilter(FILTERED);
         int currentPlayerEMC = EMCHelper.getEMCValue(player);
+
+        // WIP send new size (for scroll bar)
+        // PlayerData playerStateNew = StateSaverAndLoader.getPlayerState(player);
+        // playerStateNew.LEARNED_ITEMS = ITEMS;
+        // DataSender.sendPlayerData(player, playerStateNew);
 
         this.slots.forEach((Slot slot) -> {
             boolean isCustomSlot = !slot.canInsert(Items.AIR.getDefaultStack());
@@ -101,6 +112,18 @@ public class MagicScreenHandler extends ScreenHandler {
 
             inventory.setStack(index, stack);
         });
+    }
+
+    private List<Item> searchFilter(List<Item> items) {
+        if (searchValue == "") return items;
+
+        List<Item> newItems = new ArrayList<>();
+        for (Item item : items) {
+            // WIP fix search
+            if (item.getName().toString().toLowerCase().contains(searchValue.toLowerCase())) newItems.add(item);
+        }
+        
+        return newItems;
     }
 
     private ItemStack getHighestPossibleStack(int playerEMC, ItemStack stack) {
@@ -139,9 +162,6 @@ public class MagicScreenHandler extends ScreenHandler {
 
         if (learnedList.size() < 1) return new ArrayList<>();
 
-        // WIP filter
-        // this.searchValue
-
         int currentPlayerEMC = EMCHelper.getEMCValue(player);
 
         // sort by name
@@ -151,12 +171,33 @@ public class MagicScreenHandler extends ScreenHandler {
         // place all items player can afford first
         learnedList = sortByValid(learnedList, currentPlayerEMC);
 
+        // send to client
+        if (player.getServer() != null) {
+            PlayerData playerState = StateSaverAndLoader.getPlayerState(player);
+            playerState.LEARNED_ITEMS = learnedList;
+            DataSender.sendPlayerData(player, playerState);
+        }
+
         learnedList.forEach((itemId) -> {
             Item item = ItemHelper.getById(itemId);
             ITEMS.add(item);
         });
 
         return ITEMS;
+    }
+
+    public void scrollItems(float position) {
+        int j = getRow(position);
+        for (int k = 0; k < 6; ++k) {
+            for (int l = 0; l < 9; ++l) {
+                int m = l + (k + j) * 9;
+                inventory.setStack(l + k * 9, m >= 0 && m < this.itemList.size() ? this.itemList.get(m).getDefaultStack() : ItemStack.EMPTY);
+            }
+        }
+    }
+    
+    private int getRow(float position) {
+        return (int) Math.max(0, (int)(position * (this.itemList.size() / 9F - 6)) + 0.5D);
     }
 
     private List<String> sortByEMC(List<String> items) {
@@ -191,6 +232,12 @@ public class MagicScreenHandler extends ScreenHandler {
         addItems();
     }
 
+    private String searchValue = "";
+    public void search(String value) {
+        searchValue = value;
+        refresh();
+    }
+
     @Override
     // only take items from inv, not add
     public ItemStack quickMove(PlayerEntity player, int invSlot) {
@@ -206,7 +253,8 @@ public class MagicScreenHandler extends ScreenHandler {
         int inputSlotIndex = this.slots.size() - 1;
         // click in custom inventory
         if (invSlot >= PLAYER_INV_SIZE && invSlot < inputSlotIndex) {
-            if (!EMCHelper.getItem(player, slot.getStack(), this, true)) return newStack;
+            boolean CANT_GET_ITEM = !EMCHelper.getItem(player, slot.getStack(), this, slot.getStack().getCount());
+            if (CANT_GET_ITEM) return newStack;
         }
 
         ItemStack originalStack = slot.getStack();
@@ -239,17 +287,19 @@ public class MagicScreenHandler extends ScreenHandler {
         return this.inventory;
     }
 
+    int PLAYER_START_X_POS = 31; // 8
+    int PLAYER_START_Y_POS = 140; // 84
     private void addPlayerInventory(PlayerInventory playerInventory) {
         for (int i = 0; i < 3; ++i) {
             for (int l = 0; l < 9; ++l) {
-                this.addSlot(new Slot(playerInventory, l + i * 9 + 9, 8 + l * 18, 84 + i * 18));
+                this.addSlot(new Slot(playerInventory, l + i * 9 + 9, PLAYER_START_X_POS + l * 18, PLAYER_START_Y_POS + i * 18));
             }
         }
     }
 
     private void addPlayerHotbar(PlayerInventory playerInventory) {
         for (int i = 0; i < 9; ++i) {
-            this.addSlot(new Slot(playerInventory, i, 8 + i * 18, 142));
+            this.addSlot(new Slot(playerInventory, i, PLAYER_START_X_POS + i * 18, PLAYER_START_Y_POS + 58));
         }
     }
 }

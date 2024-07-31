@@ -19,8 +19,8 @@ public class MagicInventoryInput implements Inventory {
     private final MagicScreenHandler handler;
     private PlayerEntity player;
 
-    private final int xPos = 0;
-    private final int yPos = 0;
+    private final int xPos = 7;
+    private final int yPos = 18;
 
     public MagicInventoryInput(MagicScreenHandler handler, PlayerEntity player) {
         this(handler, 1, 1, DefaultedList.ofSize(1, ItemStack.EMPTY));

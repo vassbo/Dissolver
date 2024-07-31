@@ -59,8 +59,9 @@ public class MagicSlot extends Slot {
         } else if (!this.canTakePartial(player) && max < this.getStack().getCount()) {
             return Optional.empty();
         } else {
-            if (player.getServer() != null && !EMCHelper.getItem(player, this.getStack(), this.handler)) {
-                return Optional.empty();
+            if (player.getServer() != null) {
+                boolean CANT_GET_ITEM = !EMCHelper.getItem(player, this.getStack(), this.handler, min);
+                if (CANT_GET_ITEM) return Optional.empty();
             }
 
             min = Math.min(min, max);
@@ -79,8 +80,15 @@ public class MagicSlot extends Slot {
 
     // often called by double clicking from another inventory
     public ItemStack takeStackRange(int min, int max, PlayerEntity player) {
-        // prevent double clicking to get stack!
-        return ItemStack.EMPTY;
+        if (player.getServer() == null) return ItemStack.EMPTY;
+        // WIP prevent double clicking to get stack?
+        // return ItemStack.EMPTY;
+        
+        Optional<ItemStack> optional = this.tryTakeStackRange(min, max, player);
+        optional.ifPresent((stack) -> {
+            this.onTakeItem(player, stack);
+        });
+        return (ItemStack)optional.orElse(ItemStack.EMPTY);
     }
 
     // public ItemStack insertStack(ItemStack stack) {
