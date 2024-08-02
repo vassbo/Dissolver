@@ -59,7 +59,7 @@ public class MagicSlot extends Slot {
         } else if (!this.canTakePartial(player) && max < this.getStack().getCount()) {
             return Optional.empty();
         } else {
-            if (player.getServer() != null) {
+            if (player.getServer() != null) { // getting double stack if this is not checked
                 boolean CANT_GET_ITEM = !EMCHelper.getItem(player, this.getStack(), this.handler, min);
                 if (CANT_GET_ITEM) return Optional.empty();
             }

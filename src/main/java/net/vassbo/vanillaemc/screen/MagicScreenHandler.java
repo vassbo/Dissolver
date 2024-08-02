@@ -27,6 +27,7 @@ public class MagicScreenHandler extends ScreenHandler {
     private final int HEIGHT_SIZE = 6;
     public final int CUSTOM_INV_SIZE = WIDTH_SIZE * HEIGHT_SIZE;
     private final int PLAYER_INV_SIZE = 36; // player inventory size (9 * 4)
+
     private final PlayerEntity player;
 
     private final MagicInventory inventory;
@@ -39,11 +40,6 @@ public class MagicScreenHandler extends ScreenHandler {
 
         this.player = playerInventory.player;
 
-        // auto size
-        // double length = VanillaEMC.LEARNED_ITEMS.size() / (double)WIDTH_SIZE;
-        // int yHeight = (int)Math.ceil(length);
-        // this.inventory = new MagicInventory(this, WIDTH_SIZE, yHeight);
-
         this.inventory = new MagicInventory(this, WIDTH_SIZE, HEIGHT_SIZE);
         this.inventoryInput = new MagicInventoryInput(this, player);
 
@@ -52,6 +48,24 @@ public class MagicScreenHandler extends ScreenHandler {
 
         addSlots(inventory);
         addInputSlot(inventoryInput);
+    }
+
+    // INVENTORIES
+
+    int PLAYER_START_X_POS = 31; // 8
+    int PLAYER_START_Y_POS = 140; // 84
+    private void addPlayerInventory(PlayerInventory playerInventory) {
+        for (int i = 0; i < 3; ++i) {
+            for (int l = 0; l < 9; ++l) {
+                this.addSlot(new Slot(playerInventory, l + i * 9 + 9, PLAYER_START_X_POS + l * 18, PLAYER_START_Y_POS + i * 18));
+            }
+        }
+    }
+
+    private void addPlayerHotbar(PlayerInventory playerInventory) {
+        for (int i = 0; i < 9; ++i) {
+            this.addSlot(new Slot(playerInventory, i, PLAYER_START_X_POS + i * 18, PLAYER_START_Y_POS + 58));
+        }
     }
 
     private void addInputSlot(MagicInventoryInput inventory) {
@@ -84,46 +98,53 @@ public class MagicScreenHandler extends ScreenHandler {
         addItems();
     }
 
+    // ITEMS
+
     private void addItems() {
-        // if (player.getServer() == null) return; // only server
+        List<String> FILTERED = filterItems();
+        List<String> SEARCHED = searchFilter(FILTERED);
+        convertIdsToItems(SEARCHED);
 
-        List<Item> FILTERED = filterItems();
-        itemList = new ArrayList<Item>(FILTERED);
-
-        List<Item> ITEMS = searchFilter(FILTERED);
-        int currentPlayerEMC = EMCHelper.getEMCValue(player);
-
-        // WIP send new size (for scroll bar)
-        // PlayerData playerStateNew = StateSaverAndLoader.getPlayerState(player);
-        // playerStateNew.LEARNED_ITEMS = ITEMS;
-        // DataSender.sendPlayerData(player, playerStateNew);
-
-        this.slots.forEach((Slot slot) -> {
-            boolean isCustomSlot = !slot.canInsert(Items.AIR.getDefaultStack());
-            if (!isCustomSlot) return;
-
-            int index = slot.getIndex();
-            if (index >= ITEMS.size()) return; // no more items in list
-
-            Item item = ITEMS.get(index);
-            ItemStack stack = item.getDefaultStack();
-
-            stack = getHighestPossibleStack(currentPlayerEMC, stack);
-
-            inventory.setStack(index, stack);
-        });
+        scrollItems(this.scrollPosition);
     }
 
-    private List<Item> searchFilter(List<Item> items) {
+    private List<String> searchFilter(List<String> items) {
         if (searchValue == "") return items;
 
-        List<Item> newItems = new ArrayList<>();
-        for (Item item : items) {
-            // WIP fix search
-            if (item.getName().toString().toLowerCase().contains(searchValue.toLowerCase())) newItems.add(item);
+        List<String> newItems = new ArrayList<>();
+        for (String itemId : items) {
+            Item item = ItemHelper.getById(itemId);
+            String itemName = item.getName().getString().toLowerCase();
+            if (itemName.contains(searchValue.toLowerCase())) newItems.add(itemId);
         }
         
         return newItems;
+    }
+
+    private List<Item> convertIdsToItems(List<String> itemIds) {
+        // send to client (for scroll bar)
+        if (player.getServer() != null) {
+            // copy so items stored don't get deleted!
+            PlayerData playerState = StateSaverAndLoader.getPlayerState(player);
+            PlayerData newData = new PlayerData();
+            newData.EMC = playerState.EMC;
+            newData.LEARNED_ITEMS = itemIds;
+            DataSender.sendPlayerData(player, newData);
+        }
+
+        List<Item> ITEMS = new ArrayList<>();
+        itemIds.forEach((itemId) -> {
+            Item item = ItemHelper.getById(itemId);
+            ITEMS.add(item);
+        });
+        
+        itemList = new ArrayList<Item>(ITEMS);
+        return ITEMS;
+    }
+
+    private ItemStack getHighestStack(ItemStack stack) {
+        int currentPlayerEMC = EMCHelper.getEMCValue(player);
+        return getHighestPossibleStack(currentPlayerEMC, stack);
     }
 
     private ItemStack getHighestPossibleStack(int playerEMC, ItemStack stack) {
@@ -156,48 +177,36 @@ public class MagicScreenHandler extends ScreenHandler {
         });
     }
 
-    private List<Item> filterItems() {
-        List<Item> ITEMS = new ArrayList<>();
-        List<String> learnedList = StateSaverAndLoader.getPlayerState(player).LEARNED_ITEMS;
+    // FILTER
 
+    private List<String> filterItems() {
+        List<String> learnedList = new ArrayList<>(StateSaverAndLoader.getPlayerState(player).LEARNED_ITEMS);
         if (learnedList.size() < 1) return new ArrayList<>();
 
         int currentPlayerEMC = EMCHelper.getEMCValue(player);
 
         // sort by name
-        Collections.sort(learnedList.subList(0, learnedList.size()));
+        learnedList = sortByName(learnedList);
         // sort by highest emc values
         learnedList = sortByEMC(learnedList);
         // place all items player can afford first
         learnedList = sortByValid(learnedList, currentPlayerEMC);
 
-        // send to client
-        if (player.getServer() != null) {
-            PlayerData playerState = StateSaverAndLoader.getPlayerState(player);
-            playerState.LEARNED_ITEMS = learnedList;
-            DataSender.sendPlayerData(player, playerState);
-        }
+        return learnedList;
+    }
 
-        learnedList.forEach((itemId) -> {
-            Item item = ItemHelper.getById(itemId);
-            ITEMS.add(item);
+    private List<String> sortByName(List<String> items) {
+        Collections.sort(items, new Comparator<String>() {
+            @Override
+            public int compare(String o1, String o2) {
+                String string1 = o1.substring(o1.indexOf(":") + 1);
+                String string2 = o2.substring(o2.indexOf(":") + 1);
+                // this is intentionally inverted to the next sorts will turn it back
+                return string2.compareTo(string1);
+            }
         });
 
-        return ITEMS;
-    }
-
-    public void scrollItems(float position) {
-        int j = getRow(position);
-        for (int k = 0; k < 6; ++k) {
-            for (int l = 0; l < 9; ++l) {
-                int m = l + (k + j) * 9;
-                inventory.setStack(l + k * 9, m >= 0 && m < this.itemList.size() ? this.itemList.get(m).getDefaultStack() : ItemStack.EMPTY);
-            }
-        }
-    }
-    
-    private int getRow(float position) {
-        return (int) Math.max(0, (int)(position * (this.itemList.size() / 9F - 6)) + 0.5D);
+        return items;
     }
 
     private List<String> sortByEMC(List<String> items) {
@@ -206,7 +215,8 @@ public class MagicScreenHandler extends ScreenHandler {
             public int compare(String o1, String o2) {
                 int emc1 = EMCValues.get(o1);
                 int emc2 = EMCValues.get(o2);
-                return emc1 == emc2 ? -1 : emc1 > emc2 ? -1 : 1;
+                // this is intentionally inverted to the next sort will turn it back
+                return emc1 == emc2 ? 0 : emc1 > emc2 ? 1 : -1;
             }
         });
 
@@ -232,19 +242,46 @@ public class MagicScreenHandler extends ScreenHandler {
         addItems();
     }
 
+    // SEARCH
+
     private String searchValue = "";
     public void search(String value) {
         searchValue = value;
         refresh();
     }
 
-    @Override
+    // SCROLL
+
+    private float scrollPosition = 0.0F;
+    public void scrollItems(float position) {
+        scrollPosition = position;
+        int j = getRow(position);
+
+        for (int k = 0; k < 6; ++k) {
+            for (int l = 0; l < 9; ++l) {
+                int m = l + (k + j) * 9;
+                inventory.setStack(l + k * 9, m >= 0 && m < this.itemList.size() ? getHighestStack(this.itemList.get(m).getDefaultStack()) : ItemStack.EMPTY);
+            }
+        }
+    }
+    
+    private int getRow(float position) {
+        // temporarily adding an extra row! (seems to fix the issue with the last row not showing up!)
+        return (int) Math.max(0, (int)(position * ((this.itemList.size() + 9) / 9F - 6)) + 0.5D);
+    }
+
+    // QUICK MOVE
+
     // only take items from inv, not add
+    @Override
     public ItemStack quickMove(PlayerEntity player, int invSlot) {
         ItemStack newStack = ItemStack.EMPTY;
         Slot slot = this.slots.get(invSlot);
 
-        if (slot == null || !slot.hasStack() || player.getServer() == null) return newStack;
+        if (slot == null || !slot.hasStack()) return newStack;
+
+        // getting double stack if server is not checked
+        if (player.getServer() == null) return ItemStack.EMPTY;
 
         if (invSlot < PLAYER_INV_SIZE) {
             if (!EMCHelper.addItem(slot.getStack())) return newStack;
@@ -266,7 +303,7 @@ public class MagicScreenHandler extends ScreenHandler {
             boolean itemInserted = this.insertItem(originalStack, lastSlotIndex, this.slots.size(), true);
             if (!itemInserted) return ItemStack.EMPTY;
         } else { // input slot or custom inventory
-            boolean itemInserted = this.insertItem(originalStack, 0, this.inventory.size() + 1, false);
+            boolean itemInserted = this.insertItem(originalStack, 0, PLAYER_INV_SIZE, false);
             if (!itemInserted) return ItemStack.EMPTY;
         }
 
@@ -279,27 +316,13 @@ public class MagicScreenHandler extends ScreenHandler {
         return newStack;
     }
 
+    // EXTRA
+
     public boolean canUse(PlayerEntity player) {
         return this.inventory.canPlayerUse(player);
     }
 
     public MagicInventory getInventory() {
         return this.inventory;
-    }
-
-    int PLAYER_START_X_POS = 31; // 8
-    int PLAYER_START_Y_POS = 140; // 84
-    private void addPlayerInventory(PlayerInventory playerInventory) {
-        for (int i = 0; i < 3; ++i) {
-            for (int l = 0; l < 9; ++l) {
-                this.addSlot(new Slot(playerInventory, l + i * 9 + 9, PLAYER_START_X_POS + l * 18, PLAYER_START_Y_POS + i * 18));
-            }
-        }
-    }
-
-    private void addPlayerHotbar(PlayerInventory playerInventory) {
-        for (int i = 0; i < 9; ++i) {
-            this.addSlot(new Slot(playerInventory, i, PLAYER_START_X_POS + i * 18, PLAYER_START_Y_POS + 58));
-        }
     }
 }

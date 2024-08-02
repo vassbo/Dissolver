@@ -16,6 +16,8 @@ import net.vassbo.vanillaemc.screen.MagicScreenHandler;
 
 public class EMCHelper {
     public static void addEMCValue(PlayerEntity player, int addedValue) {
+        if (player.getServer() == null) return;
+
         int currentValue = getEMCValue(player);
         int newValue = currentValue += addedValue;
         
@@ -23,6 +25,8 @@ public class EMCHelper {
     }
 
     public static boolean removeEMCValue(PlayerEntity player, int removedValue) {
+        if (player.getServer() == null) return false;
+
         int currentValue = getEMCValue(player);
         int newValue = currentValue -= removedValue;
 

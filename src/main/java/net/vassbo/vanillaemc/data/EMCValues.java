@@ -426,6 +426,7 @@ public class EMCValues {
         queryRecipes(RECIPES);
     }
 
+    private static List<String> unused = Arrays.asList("minecraft:filled_map", "minecraft:tipped_arrow", "minecraft:debug_stick", "minecraft:small_amethyst_bud", "minecraft:large_amethyst_bud", "minecraft:disc_fragment_5", "minecraft:petrified_oak_slab", "minecraft:suspicious_stew", "minecraft:bundle", "minecraft:enchanted_book", "minecraft:air", "minecraft:ominous_bottle", "minecraft:structure_void", "minecraft:chipped_anvil", "minecraft:firework_star", "minecraft:knowledge_book", "minecraft:light", "minecraft:written_book", "minecraft:damaged_anvil", "minecraft:medium_amethyst_bud");
     static int previousCompletedSize = 0;
     static int loops = 0;
     public static void queryRecipes(HashMap<String, List<String>> RECIPES) {
@@ -459,37 +460,41 @@ public class EMCValues {
             // if (HAS_MULTIPLE.size() > 0) VanillaEMC.LOGGER.info("FOUND " + (HAS_MULTIPLE.size()) + " ITEMS WITH MULTIPLE DIFFERENT VALUES!");
 
             // LOG ITEMS WITH MISSING EMC - that does not have a crafting recipe!
-            List<String> unused = Arrays.asList("minecraft:filled_map", "minecraft:tipped_arrow", "minecraft:debug_stick", "minecraft:small_amethyst_bud", "minecraft:large_amethyst_bud", "minecraft:disc_fragment_5");
             for (String missing : MISSING) {
-                if (!COMPLETED.contains(missing) && !unused.contains(missing)) VanillaEMC.LOGGER.info("FOUND ITEM WITH NO RECIPE AND NO EMC: " + ItemHelper.getName(ItemHelper.getById(missing)) + " (" +missing+ ")");
+                if (!COMPLETED.contains(missing) && !unused.contains(missing)) VanillaEMC.LOGGER.info("FOUND ITEM WITH NO RECIPE AND NO EMC: " + ItemHelper.getName(ItemHelper.getById(missing)) + " (" + missing + ")");
             }
 
             int NOT_FOUND = 0;
-            List<String> creative_items = Arrays.asList("spawn_egg", "command_block", "bedrock", "barrier");
             for (RegistryKey<Item> item : Registries.ITEM.getKeys()) {
                 String itemId = item.getValue().toString();
-
-                // add dynamic (creative items)
-                if (INCLUDE_CREATIVE_ITEMS) {
-                    if (itemId.contains("spawn_egg")) {
-                        EMC_VALUES.put(itemId, 100000);
-                    }
-                    return;
-                }
-
-                for (String itemPart : creative_items) {
-                    if (itemId.contains(itemPart)) return;
-                }
-
-                if (!EMC_VALUES.containsKey(itemId) && !unused.contains(itemId) && !itemId.contains("bucket") && !itemId.contains("potion") && !itemId.contains("banner") && !itemId.contains("infested_") && itemId != "minecraft:air") {
-                    NOT_FOUND++;
-                    VanillaEMC.LOGGER.info("No EMC value for item: " + ItemHelper.getName(ItemHelper.getById(itemId)) + " (" + itemId + ")");
-                }
+                if (!checkItem(itemId)) NOT_FOUND++;
             }
 
             // VanillaEMC.LOGGER.info("FOUND " + (NOT_FOUND.size()) + " ITEMS WITH NO EMC!");
             VanillaEMC.LOGGER.info("Loaded EMC values for " + EMC_VALUES.size() + " recipes! Could not find value for " + NOT_FOUND + " items.");
         }
+    }
+
+    private static List<String> creative_items = Arrays.asList("spawn_egg", "command_block", "bedrock", "barrier", "structure_block", "jigsaw", "spawner", "vault", "end_portal_frame", "budding_amethyst", "reinforced_deepslate");
+    private static boolean checkItem(String itemId) {
+        // add dynamic (creative items)
+        if (INCLUDE_CREATIVE_ITEMS) {
+            if (itemId.contains("spawn_egg")) {
+                EMC_VALUES.put(itemId, 100000);
+            }
+            return true;
+        }
+
+        for (String itemPart : creative_items) {
+            if (itemId.contains(itemPart)) return true;
+        }
+
+        if (!EMC_VALUES.containsKey(itemId) && !unused.contains(itemId) && !itemId.contains("bucket") && !itemId.contains("potion") && !itemId.contains("banner_pattern") && !itemId.contains("infested_") && itemId != "minecraft:air") {
+            VanillaEMC.LOGGER.info("No EMC value for item: " + ItemHelper.getName(ItemHelper.getById(itemId)) + " (" + itemId + ")");
+            return false;
+        }
+
+        return true;
     }
 
     private static int getAverage(List<Integer> list) {
