@@ -7,7 +7,7 @@ import net.vassbo.vanillaemc.packets.clientbound.PlayerDataPayload;
 import net.vassbo.vanillaemc.packets.serverbound.ClientPayload;
 
 public class Packets {
-	public static void register() {
+	public static void init() {
         VanillaEMC.LOGGER.info("Registering packet payloads.");
 		clientbound(PayloadTypeRegistry.playS2C());
 		serverbound(PayloadTypeRegistry.playC2S());

@@ -10,17 +10,17 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.util.collection.DefaultedList;
 
-public class MagicInventory implements Inventory {
+public class DissolverInventory implements Inventory {
     private final DefaultedList<ItemStack> stacks;
     private final int width;
     private final int height;
     private final ScreenHandler handler;
 
-    public MagicInventory(ScreenHandler handler, int width, int height) {
+    public DissolverInventory(ScreenHandler handler, int width, int height) {
         this(handler, width, height, DefaultedList.ofSize(width * height, ItemStack.EMPTY));
     }
 
-    public MagicInventory(ScreenHandler handler, int width, int height, DefaultedList<ItemStack> stacks) {
+    public DissolverInventory(ScreenHandler handler, int width, int height, DefaultedList<ItemStack> stacks) {
         this.stacks = stacks;
         this.handler = handler;
         this.width = width;

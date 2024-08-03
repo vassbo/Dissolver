@@ -18,8 +18,8 @@ import net.vassbo.vanillaemc.data.PlayerDataClient;
 import net.vassbo.vanillaemc.helpers.NumberHelpers;
 import net.vassbo.vanillaemc.packets.DataSenderClient;
 
-public class MagicScreen extends HandledScreen<MagicScreenHandler> {
-    private static final Identifier TEXTURE = Identifier.of(VanillaEMC.MOD_ID, "textures/gui/magic_block_gui.png");
+public class DissolverScreen extends HandledScreen<DissolverScreenHandler> {
+    private static final Identifier TEXTURE = Identifier.of(VanillaEMC.MOD_ID, "textures/gui/dissolver_block_gui.png");
     
     // scroll
     private static final Identifier SCROLLER_TEXTURE = Identifier.ofVanilla("container/creative_inventory/scroller");
@@ -31,7 +31,7 @@ public class MagicScreen extends HandledScreen<MagicScreenHandler> {
     private TextFieldWidget searchBox;
     private boolean ignoreTypedCharacter;
 
-    public MagicScreen(MagicScreenHandler handler, PlayerInventory inventory, Text title) {
+    public DissolverScreen(DissolverScreenHandler handler, PlayerInventory inventory, Text title) {
         super(handler, inventory, title);
     }
 

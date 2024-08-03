@@ -14,12 +14,12 @@ import net.vassbo.vanillaemc.VanillaEMC;
 import net.vassbo.vanillaemc.block.ModBlocks;
 
 public class ModItemGroups {
-    public static final ItemGroup VANILLAEMC_GROUP = registerItemGroup("vanillaemc_group", "vanillaemc.modname", ModItems.MAGIC_ITEM, ModItemGroups::addToCustomInventory);
+    public static final ItemGroup VANILLAEMC_GROUP = registerItemGroup("vanillaemc_group", "vanillaemc.modname", ModItems.CRYSTAL_FRAME_ITEM, ModItemGroups::addToCustomInventory);
 
     private static void addToCustomInventory(DisplayContext displayContext, Entries entries) {
-        entries.add(ModItems.MAGIC_ITEM);
+        entries.add(ModItems.CRYSTAL_FRAME_ITEM);
         // entries.add(ModItems.GLOWING_ITEM);
-        entries.add(ModBlocks.MAGIC_BLOCK);
+        entries.add(ModBlocks.DISSOLVER_BLOCK);
     }
 
     // HELPERS
@@ -38,7 +38,6 @@ public class ModItemGroups {
 
     // INITIALIZE
 
-    public static void registerItemGroups() {
-        // 
+    public static void init() {
     }
 }

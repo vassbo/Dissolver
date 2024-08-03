@@ -11,7 +11,7 @@
             "entries": [
                 {
                     "type": "minecraft:item",
-                    "name": "vanillaemc:magic_block"
+                    "name": "vanillaemc:dissolver_block"
                 }
             ],
             "rolls": 1.0

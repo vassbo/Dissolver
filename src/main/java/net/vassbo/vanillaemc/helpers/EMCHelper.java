@@ -12,7 +12,7 @@ import net.vassbo.vanillaemc.data.EMCValues;
 import net.vassbo.vanillaemc.data.PlayerData;
 import net.vassbo.vanillaemc.data.StateSaverAndLoader;
 import net.vassbo.vanillaemc.packets.DataSender;
-import net.vassbo.vanillaemc.screen.MagicScreenHandler;
+import net.vassbo.vanillaemc.screen.DissolverScreenHandler;
 
 public class EMCHelper {
     public static void addEMCValue(PlayerEntity player, int addedValue) {
@@ -61,7 +61,7 @@ public class EMCHelper {
 
     // GET
 
-    public static boolean getItem(PlayerEntity player, ItemStack itemStack, MagicScreenHandler handler, int items) {
+    public static boolean getItem(PlayerEntity player, ItemStack itemStack, DissolverScreenHandler handler, int items) {
         String itemId = itemStack.getItem().toString();
         int emcValue = EMCValues.get(itemId) * items;
 
@@ -91,13 +91,13 @@ public class EMCHelper {
 
     // ADD
 
-    public static boolean addItem(ItemStack itemStack, PlayerEntity player, MagicScreenHandler handler) {
+    public static boolean addItem(ItemStack itemStack, PlayerEntity player, DissolverScreenHandler handler) {
         String itemId = itemStack.getItem().toString();
         int emcValue = EMCValues.get(itemId);
 
         if (!checkValidEMC(emcValue, itemId, Action.ADD)) return false;
 
-        // calculated new EMC (from MagicInventoryInput)
+        // calculated new EMC (from DissolverInventoryInput)
         int itemCount = itemStack.getCount();
         int addedEmcValue = emcValue * itemCount;
 

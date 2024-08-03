@@ -8,12 +8,12 @@ import net.minecraft.registry.Registry;
 import net.vassbo.vanillaemc.block.ModBlocks;
 
 public class ModBlockEntities {
-    public static BlockEntityType<MagicBlockEntity> MAGIC_BLOCK_ENTITY = create("magic_block_entity", BlockEntityType.Builder.create(MagicBlockEntity::new, ModBlocks.MAGIC_BLOCK));
+    public static BlockEntityType<DissolverBlockEntity> DISSOLVER_BLOCK_ENTITY = create("dissolver_block_entity", BlockEntityType.Builder.create(DissolverBlockEntity::new, ModBlocks.DISSOLVER_BLOCK));
     
     static <T extends BlockEntity> BlockEntityType<T> create(String id, Builder<T> builder) {
         return Registry.register(Registries.BLOCK_ENTITY_TYPE, id, builder.build(null));
     }
 
-    public static void registerBlockEntities() {
+    public static void init() {
     }
 }

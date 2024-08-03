@@ -17,12 +17,12 @@ import net.vassbo.vanillaemc.data.PlayerData;
 import net.vassbo.vanillaemc.data.StateSaverAndLoader;
 import net.vassbo.vanillaemc.helpers.EMCHelper;
 import net.vassbo.vanillaemc.helpers.ItemHelper;
-import net.vassbo.vanillaemc.inventory.MagicInventory;
-import net.vassbo.vanillaemc.inventory.MagicInventoryInput;
-import net.vassbo.vanillaemc.inventory.MagicSlot;
+import net.vassbo.vanillaemc.inventory.DissolverInventory;
+import net.vassbo.vanillaemc.inventory.DissolverInventoryInput;
+import net.vassbo.vanillaemc.inventory.DissolverSlot;
 import net.vassbo.vanillaemc.packets.DataSender;
 
-public class MagicScreenHandler extends ScreenHandler {
+public class DissolverScreenHandler extends ScreenHandler {
     private final int WIDTH_SIZE = 9;
     private final int HEIGHT_SIZE = 6;
     public final int CUSTOM_INV_SIZE = WIDTH_SIZE * HEIGHT_SIZE;
@@ -30,18 +30,18 @@ public class MagicScreenHandler extends ScreenHandler {
 
     private final PlayerEntity player;
 
-    private final MagicInventory inventory;
-    private final MagicInventoryInput inventoryInput;
+    private final DissolverInventory inventory;
+    private final DissolverInventoryInput inventoryInput;
 
     public List<Item> itemList = new ArrayList<>();
 
-    public MagicScreenHandler(int syncId, PlayerInventory playerInventory) {
-        super(ModScreenHandlers.MAGIC_SCREEN_HANDLER_TYPE, syncId);
+    public DissolverScreenHandler(int syncId, PlayerInventory playerInventory) {
+        super(ModScreenHandlers.DISSOLVER_SCREEN_HANDLER_TYPE, syncId);
 
         this.player = playerInventory.player;
 
-        this.inventory = new MagicInventory(this, WIDTH_SIZE, HEIGHT_SIZE);
-        this.inventoryInput = new MagicInventoryInput(this, player);
+        this.inventory = new DissolverInventory(this, WIDTH_SIZE, HEIGHT_SIZE);
+        this.inventoryInput = new DissolverInventoryInput(this, player);
 
         addPlayerInventory(playerInventory);
         addPlayerHotbar(playerInventory);
@@ -68,14 +68,14 @@ public class MagicScreenHandler extends ScreenHandler {
         }
     }
 
-    private void addInputSlot(MagicInventoryInput inventory) {
+    private void addInputSlot(DissolverInventoryInput inventory) {
         this.addSlot(inventory.getInputSlot());
     }
 
     private int DEFAULT_SLOT_SIZE = 18;
     private int START_X_POS = 31;
     private int START_Y_POS = 36;
-    private void addSlots(MagicInventory inventory) {
+    private void addSlots(DissolverInventory inventory) {
         int xIndex = -1;
         int yIndex = -1;
         int index = -1;
@@ -87,7 +87,7 @@ public class MagicScreenHandler extends ScreenHandler {
             }
             
             index++;
-            Slot customSlot = new MagicSlot(inventory, index, DEFAULT_SLOT_SIZE * xIndex + START_X_POS, DEFAULT_SLOT_SIZE * yIndex + START_Y_POS, this);
+            Slot customSlot = new DissolverSlot(inventory, index, DEFAULT_SLOT_SIZE * xIndex + START_X_POS, DEFAULT_SLOT_SIZE * yIndex + START_Y_POS, this);
             this.addSlot(customSlot);
 
             // set to air
@@ -322,7 +322,7 @@ public class MagicScreenHandler extends ScreenHandler {
         return this.inventory.canPlayerUse(player);
     }
 
-    public MagicInventory getInventory() {
+    public DissolverInventory getInventory() {
         return this.inventory;
     }
 }

@@ -1,13 +1,14 @@
 {
     "vanillaemc.modname": "VanillaEMC",
 
-    "item.vanillaemc.magic_item": "Magic Item",
+    "item.vanillaemc.crystal_frame_item": "Crystal Frame",
     "item.vanillaemc.glowing_item": "§6§lGlowing Item§r",
-    "block.vanillaemc.magic_block": "Magic Block",
+    "block.vanillaemc.dissolver_block": "Dissolver",
+    "entity.vanillaemc.crystal_entity_type": "Crystal Entity",
 
     "item_tooltip.vanillaemc.default": "A VanillaEMC Item!",
     "item_tooltip.vanillaemc.emc": "§dEMC:§r %d",
-    "item_tooltip.vanillaemc.magic_item": "Something magical...",
+    "item_tooltip.vanillaemc.crystal_frame_item": "Something magical...",
     "item_tooltip.vanillaemc.glowing_item": "Shining!",
 
     "emc.title": "EMC: §6%d",

@@ -1,6 +1,6 @@
 {
     "parent": "item/generated",
     "textures": {
-        "layer0": "vanillaemc:item/magic_item"
+        "layer0": "vanillaemc:item/crystal_frame_item"
     }
 }

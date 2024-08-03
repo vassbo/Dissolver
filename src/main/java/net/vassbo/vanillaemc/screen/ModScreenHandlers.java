@@ -8,10 +8,10 @@ import net.minecraft.util.Identifier;
 import net.vassbo.vanillaemc.VanillaEMC;
 
 public class ModScreenHandlers {
-    private static final ScreenHandlerType<MagicScreenHandler> MAGIC_SCREEN = new ScreenHandlerType<>((syncId, playerInventory) -> new MagicScreenHandler(syncId, playerInventory), FeatureFlags.VANILLA_FEATURES);
+    private static final ScreenHandlerType<DissolverScreenHandler> DISSOLVER_SCREEN = new ScreenHandlerType<>((syncId, playerInventory) -> new DissolverScreenHandler(syncId, playerInventory), FeatureFlags.VANILLA_FEATURES);
     
-    public static final ScreenHandlerType<MagicScreenHandler> MAGIC_SCREEN_HANDLER_TYPE = Registry.register(Registries.SCREEN_HANDLER, Identifier.of(VanillaEMC.MOD_ID, "magic_screen_handler"), MAGIC_SCREEN);
+    public static final ScreenHandlerType<DissolverScreenHandler> DISSOLVER_SCREEN_HANDLER_TYPE = Registry.register(Registries.SCREEN_HANDLER, Identifier.of(VanillaEMC.MOD_ID, "dissolver_screen_handler"), DISSOLVER_SCREEN);
 
-    public static void registerScreenHandlers() {
+    public static void init() {
     }
 }

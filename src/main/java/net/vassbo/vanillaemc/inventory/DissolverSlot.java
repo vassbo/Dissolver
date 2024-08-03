@@ -7,13 +7,13 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.slot.Slot;
 import net.vassbo.vanillaemc.helpers.EMCHelper;
-import net.vassbo.vanillaemc.screen.MagicScreenHandler;
+import net.vassbo.vanillaemc.screen.DissolverScreenHandler;
 
-public class MagicSlot extends Slot {
+public class DissolverSlot extends Slot {
     public int id;
-    public final MagicScreenHandler handler;
+    public final DissolverScreenHandler handler;
 
-    public MagicSlot(Inventory inventory, int index, int x, int y, MagicScreenHandler handler) {
+    public DissolverSlot(Inventory inventory, int index, int x, int y, DissolverScreenHandler handler) {
         super(inventory, index, x, y);
         // this.inventory = inventory;
         // this.index = index;

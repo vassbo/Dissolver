@@ -5,10 +5,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.screen.slot.Slot;
 import net.vassbo.vanillaemc.helpers.EMCHelper;
 
-public class MagicSlotInput extends Slot {
+public class DissolverSlotInput extends Slot {
     public int id;
 
-    public MagicSlotInput(Inventory inventory, int index, int x, int y) {
+    public DissolverSlotInput(Inventory inventory, int index, int x, int y) {
         super(inventory, index, x, y);
     }
 

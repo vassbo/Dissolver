@@ -8,20 +8,19 @@ import net.minecraft.text.Text;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.vassbo.vanillaemc.VanillaEMC;
-import net.vassbo.vanillaemc.screen.MagicScreenHandler;
+import net.vassbo.vanillaemc.screen.DissolverScreenHandler;
 
-public class MagicBlockEntity extends CustomBlockEntity {
+public class DissolverBlockEntity extends CustomBlockEntity {
     private DefaultedList<ItemStack> inputStacks;
 
-    public MagicBlockEntity(BlockPos pos, BlockState state) {
-        super(ModBlockEntities.MAGIC_BLOCK_ENTITY, pos, state);
+    public DissolverBlockEntity(BlockPos pos, BlockState state) {
+        super(ModBlockEntities.DISSOLVER_BLOCK_ENTITY, pos, state);
         // "dynamic" size
         this.inputStacks = DefaultedList.ofSize(0, ItemStack.EMPTY);
     }
 
     public ScreenHandler createScreenHandler(int syncId, PlayerInventory playerInventory) {
-        // return ModScreenHandlers.MAGIC_SCREEN_HANDLER;
-        MagicScreenHandler handler = new MagicScreenHandler(syncId, playerInventory); // , this
+        DissolverScreenHandler handler = new DissolverScreenHandler(syncId, playerInventory);
         VanillaEMC.activeHandlers.put(playerInventory.player.getUuid(), handler);
         return handler;
     }
@@ -35,7 +34,7 @@ public class MagicBlockEntity extends CustomBlockEntity {
     }
 
     protected Text getContainerName() {
-        return Text.translatable("block.vanillaemc.magic_block");
+        return Text.translatable("block.vanillaemc.dissolver_block");
     }
 
     public int size() {
@@ -46,4 +45,8 @@ public class MagicBlockEntity extends CustomBlockEntity {
     public ItemStack getRenderStack() {
         return this.getStack(0);
     }
+
+    // test
+
+    public int endCrystalAge = 10;
 }

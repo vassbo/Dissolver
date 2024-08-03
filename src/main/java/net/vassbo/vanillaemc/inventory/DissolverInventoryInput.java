@@ -10,32 +10,32 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.collection.DefaultedList;
 import net.vassbo.vanillaemc.helpers.EMCHelper;
-import net.vassbo.vanillaemc.screen.MagicScreenHandler;
+import net.vassbo.vanillaemc.screen.DissolverScreenHandler;
 
-public class MagicInventoryInput implements Inventory {
+public class DissolverInventoryInput implements Inventory {
     private final DefaultedList<ItemStack> stacks;
     private final int width;
     private final int height;
-    private final MagicScreenHandler handler;
+    private final DissolverScreenHandler handler;
     private PlayerEntity player;
 
     private final int xPos = 7;
     private final int yPos = 18;
 
-    public MagicInventoryInput(MagicScreenHandler handler, PlayerEntity player) {
+    public DissolverInventoryInput(DissolverScreenHandler handler, PlayerEntity player) {
         this(handler, 1, 1, DefaultedList.ofSize(1, ItemStack.EMPTY));
         this.player = player;
     }
 
-    public MagicInventoryInput(MagicScreenHandler handler, int width, int height, DefaultedList<ItemStack> stacks) {
+    public DissolverInventoryInput(DissolverScreenHandler handler, int width, int height, DefaultedList<ItemStack> stacks) {
         this.stacks = stacks;
         this.handler = handler;
         this.width = width;
         this.height = height;
     }
 
-    public MagicSlotInput getInputSlot() {
-        return new MagicSlotInput(this, 0, xPos, yPos);
+    public DissolverSlotInput getInputSlot() {
+        return new DissolverSlotInput(this, 0, xPos, yPos);
     }
 
     public int size() {

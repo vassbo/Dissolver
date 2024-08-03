@@ -7,7 +7,7 @@ import net.minecraft.util.Identifier;
 import net.vassbo.vanillaemc.VanillaEMC;
 
 public class ModItems {
-    public static final Item MAGIC_ITEM = registerItem("magic_item", new MagicItem(new Item.Settings()));
+    public static final Item CRYSTAL_FRAME_ITEM = registerItem("crystal_frame_item", new CrystalFrameItem(new Item.Settings()));
     // public static final Item GLOWING_ITEM = registerItem("glowing_item", new GlowingItem(new Item.Settings()));
 
     // private static void addToVanillaTools(FabricItemGroupEntries entries) {
@@ -25,7 +25,7 @@ public class ModItems {
 
     // INITIALIZE
 
-    public static void registerItems() {
+    public static void init() {
         // ItemGroupEvents.modifyEntriesEvent(ItemGroups.TOOLS).register(ModItems::addToVanillaTools);
     }
 }

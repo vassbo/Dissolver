@@ -9,11 +9,11 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.vassbo.vanillaemc.helpers.EMCHelper;
 
-public class MagicItem extends Item {
-    private static String TOOLTIP_TEXT = "item_tooltip.vanillaemc.magic_item";
+public class CrystalFrameItem extends Item {
+    private static String TOOLTIP_TEXT = "item_tooltip.vanillaemc.crystal_frame_item";
     private static Formatting TOOLTIP_FORMAT = Formatting.GOLD;
 
-    public MagicItem(Settings settings) {
+    public CrystalFrameItem(Settings settings) {
 		super(settings);
 	}
 

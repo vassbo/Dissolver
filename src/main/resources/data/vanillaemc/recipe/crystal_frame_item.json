@@ -2,15 +2,16 @@
     "type": "minecraft:crafting_shaped",
     "category": "misc",
     "pattern": [
-        " A ",
+        "RAR",
         "ADA",
-        " A "
+        "RAR"
     ],
     "key": {
         "A": { "item": "minecraft:amethyst_shard" },
-        "D": { "item": "minecraft:diamond" }
+        "D": { "item": "minecraft:diamond" },
+        "R": { "item": "minecraft:redstone" }
     },
     "result": {
-        "id": "vanillaemc:magic_item"
+        "id": "vanillaemc:crystal_frame_item"
     }
 }

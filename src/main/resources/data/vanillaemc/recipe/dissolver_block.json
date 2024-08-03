@@ -7,10 +7,10 @@
         "###"
     ],
     "key": {
-        "#": { "item": "vanillaemc:magic_item" },
+        "#": { "item": "vanillaemc:crystal_frame_item" },
         "S": { "item": "minecraft:nether_star" }
     },
     "result": {
-        "id": "vanillaemc:magic_block"
+        "id": "vanillaemc:dissolver_block"
     }
 }

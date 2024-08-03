@@ -96,7 +96,7 @@ public class ModCommands {
 
     // INITIALIZE
 
-    public static void registerCommands() {
+    public static void init() {
         // createCustomCommand("emctest", ModCommands::changeEMC);
 
         registerCommand(
