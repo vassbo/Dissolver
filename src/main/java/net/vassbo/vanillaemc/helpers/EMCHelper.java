@@ -121,10 +121,14 @@ public class EMCHelper {
         List<String> learnedList = StateSaverAndLoader.getPlayerState(player).LEARNED_ITEMS;
         if (learnedList.contains(itemId)) return;
 
-        sendMessageToClient(player, "emc.action.learned_short");
-
         learnedList.add(itemId);
         StateSaverAndLoader.setPlayerLearned(player, learnedList);
+
+        // let blocklist update before sending message (to prevent empty message sent)
+        new Thread(() -> {
+            wait(50);
+            sendMessageToClient(player, "emc.action.stored_short");
+        }).start();
     }
 
     public static void forgetItem(PlayerEntity player, String itemId) {
@@ -133,6 +137,12 @@ public class EMCHelper {
 
         learnedList.remove(itemId);
         StateSaverAndLoader.setPlayerLearned(player, learnedList);
+
+        // let blocklist update before sending message (to prevent empty message sent)
+        new Thread(() -> {
+            wait(50);
+            sendMessageToClient(player, "emc.action.removed_short");
+        }).start();
     }
 
     public static void learnAllItems(PlayerEntity player) {

@@ -47,7 +47,9 @@ public class DissolverScreenHandler extends ScreenHandler {
         addPlayerHotbar(playerInventory);
 
         addSlots(inventory);
-        addInputSlot(inventoryInput);
+        this.addSlot(inventoryInput.getRemoverSlot());
+        this.addSlot(inventoryInput.getAdderSlot());
+        this.addSlot(inventoryInput.getInputSlot());
     }
 
     // INVENTORIES
@@ -66,10 +68,6 @@ public class DissolverScreenHandler extends ScreenHandler {
         for (int i = 0; i < 9; ++i) {
             this.addSlot(new Slot(playerInventory, i, PLAYER_START_X_POS + i * 18, PLAYER_START_Y_POS + 58));
         }
-    }
-
-    private void addInputSlot(DissolverInventoryInput inventory) {
-        this.addSlot(inventory.getInputSlot());
     }
 
     private int DEFAULT_SLOT_SIZE = 18;
@@ -157,6 +155,15 @@ public class DissolverScreenHandler extends ScreenHandler {
 
         if (emcValue > playerEMC) {
             // WIP set red nbt data
+            // VanillaEMC.LOGGER.info("DATA: " + stack.getItem().getTooltipData(stack));
+            // Item item = stack.getItem();
+            // TooltipContext context = item.TooltipContext();
+            // List<Text> tooltip = new ArrayList<>();
+            // tooltip.add(Text.literal("HELLO"));
+            // VanillaEMC.LOGGER.info("TT: " + tooltip);
+            // item.appendTooltip(stack, context, tooltip, TooltipType.BASIC);
+            // VanillaEMC.LOGGER.info("TT22: " + item.getTooltipData(item.getDefaultStack()));
+            // return item.getDefaultStack();
             return stack;
         }
 
@@ -287,9 +294,9 @@ public class DissolverScreenHandler extends ScreenHandler {
             if (!EMCHelper.addItem(slot.getStack())) return newStack;
         }
 
-        int inputSlotIndex = this.slots.size() - 1;
+        int inputSlotsStartIndex = this.slots.size() - this.inventoryInput.slots();
         // click in custom inventory
-        if (invSlot >= PLAYER_INV_SIZE && invSlot < inputSlotIndex) {
+        if (invSlot >= PLAYER_INV_SIZE && invSlot < inputSlotsStartIndex) {
             boolean CANT_GET_ITEM = !EMCHelper.getItem(player, slot.getStack(), this, slot.getStack().getCount());
             if (CANT_GET_ITEM) return newStack;
         }
@@ -302,7 +309,7 @@ public class DissolverScreenHandler extends ScreenHandler {
             int lastSlotIndex = this.slots.size() - 1;
             boolean itemInserted = this.insertItem(originalStack, lastSlotIndex, this.slots.size(), true);
             if (!itemInserted) return ItemStack.EMPTY;
-        } else { // input slot or custom inventory
+        } else { // input slots or custom inventory
             boolean itemInserted = this.insertItem(originalStack, 0, PLAYER_INV_SIZE, false);
             if (!itemInserted) return ItemStack.EMPTY;
         }

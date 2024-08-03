@@ -36,7 +36,7 @@ public class CrystalEntityRenderer extends EntityRenderer<CrystalEntity> {
 	private final ModelPart frame;
 	// private final ModelPart bottom;
 	private final float SCALE = 0.8F;
-	private final float SPEED = 1.0F;
+	private final float SPEED = 0.5F;
 
 	public CrystalEntityRenderer(EntityRendererFactory.Context context) {
 		super(context);

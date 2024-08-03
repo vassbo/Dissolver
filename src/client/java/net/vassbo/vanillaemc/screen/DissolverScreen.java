@@ -112,6 +112,10 @@ public class DissolverScreen extends HandledScreen<DissolverScreenHandler> {
     private String getMessage() {
         String CUSTOM_MSG = PlayerDataClient.MESSAGE;
         if (CUSTOM_MSG.isEmpty()) {
+            if (PlayerDataClient.EMC == 0) {
+                return Text.translatable("emc.empty").toString();
+            }
+
             String emc = NumberHelpers.format(PlayerDataClient.EMC);
             Text text = Text.translatable("emc.title", emc);
             return text.getString();

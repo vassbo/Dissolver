@@ -1,5 +1,6 @@
 package net.vassbo.vanillaemc.entity;
 
+import net.minecraft.block.piston.PistonBehavior;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.data.DataTracker;
@@ -52,5 +53,10 @@ public class CrystalEntity extends Entity {
 	@Override
 	public boolean shouldRender(double distance) {
 		return super.shouldRender(distance);
+	}
+
+	@Override
+	public PistonBehavior getPistonBehavior() {
+		return PistonBehavior.IGNORE;
 	}
 }

@@ -2,17 +2,20 @@
     "vanillaemc.modname": "VanillaEMC",
 
     "item.vanillaemc.crystal_frame_item": "Crystal Frame",
-    "item.vanillaemc.glowing_item": "§6§lGlowing Item§r",
     "block.vanillaemc.dissolver_block": "Dissolver",
-    "entity.vanillaemc.crystal_entity_type": "Crystal Entity",
+    "entity.vanillaemc.crystal_entity": "Crystal Entity",
 
-    "item_tooltip.vanillaemc.default": "A VanillaEMC Item!",
     "item_tooltip.vanillaemc.emc": "§dEMC:§r %d",
-    "item_tooltip.vanillaemc.crystal_frame_item": "Something magical...",
-    "item_tooltip.vanillaemc.glowing_item": "Shining!",
+    "item_tooltip.vanillaemc.crystal_frame_item": "Something's missing, I just can't frame it...",
+    "item_tooltip.vanillaemc.dissolver_block_item": "Dissolving & Reassembling!",
 
     "emc.title": "EMC: §6%d",
+    "emc.empty": "No EMC! :(",
     "emc.action.not_enough": "You do not have enough EMC!",
     "emc.action.not_enough_short": "§cNot enough!",
-    "emc.action.learned_short": "§aLearned!"
+    "emc.action.stored_short": "§aStored!",
+    "emc.action.removed_short": "§cRemoved!",
+
+    "advancements.story.place_dissolver.title": "Deconstruct Reconstruct",
+    "advancements.story.place_dissolver.description": "Place a Dissolver"
 }

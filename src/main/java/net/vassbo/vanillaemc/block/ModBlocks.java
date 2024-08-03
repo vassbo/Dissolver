@@ -13,15 +13,18 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.Rarity;
 import net.vassbo.vanillaemc.VanillaEMC;
 import net.vassbo.vanillaemc.block.entity.DissolverBlockEntity;
+import net.vassbo.vanillaemc.item.DissolverBlockItem;
 
 public class ModBlocks {
     public static final Block DISSOLVER_BLOCK = registerBlock("dissolver_block", new DissolverBlock(AbstractBlock.Settings.copy(Blocks.NETHERITE_BLOCK).sounds(BlockSoundGroup.AMETHYST_BLOCK).nonOpaque()));
     public static final BlockEntityType<DissolverBlockEntity> DISSOLVER_BLOCK_ENTITY = registerBlockEntity("dissolver_block_entity", DISSOLVER_BLOCK);
-
+    // public static final DissolverBlockItem DISSOLVER_BLOCK_ITEM = new DissolverBlockItem(DISSOLVER_BLOCK, new Item.Settings().rarity(Rarity.RARE));
+    
     // HELPERS
-
+    
     private static Block registerBlock(String id, Block block) {
-        registerBlockItem(id, block);
+        DissolverBlockItem DISSOLVER_BLOCK_ITEM = new DissolverBlockItem(block, new Item.Settings().rarity(Rarity.RARE));
+        registerBlockItem(id, DISSOLVER_BLOCK_ITEM); // WIP
         return Registry.register(Registries.BLOCK, Identifier.of(VanillaEMC.MOD_ID, id), block);
     }
 
@@ -33,8 +36,8 @@ public class ModBlocks {
         );
     }
 
-    private static Item registerBlockItem(String id, Block block) {
-        return Registry.register(Registries.ITEM, Identifier.of(VanillaEMC.MOD_ID, id), new BlockItem(block, new Item.Settings().rarity(Rarity.RARE)));
+    private static Item registerBlockItem(String id, BlockItem blockItem) {
+        return Registry.register(Registries.ITEM, Identifier.of(VanillaEMC.MOD_ID, id), blockItem);
     }
 
     // INITIALIZE

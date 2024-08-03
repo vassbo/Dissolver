@@ -3,7 +3,6 @@
 	"package": "net.vassbo.vanillaemc.mixin",
 	"compatibilityLevel": "JAVA_21",
 	"mixins": [
-		"ExampleMixin",
 		"ItemMixin",
 		"RecipeManagerMixin",
 		"TagManagerLoaderMixin"

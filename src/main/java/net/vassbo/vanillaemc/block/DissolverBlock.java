@@ -31,56 +31,14 @@ import net.vassbo.vanillaemc.entity.ModEntities;
 public class DissolverBlock extends BlockWithEntity {
 	public static final MapCodec<DissolverBlock> CODEC = createCodec(DissolverBlock::new);
 
-    // particle block
-	// protected static final MapCodec<SimpleParticleType> PARTICLE_TYPE_CODEC = Registries.PARTICLE_TYPE
-	// 	.getCodec()
-	// 	.<SimpleParticleType>comapFlatMap(
-	// 		particleType -> particleType instanceof SimpleParticleType simpleParticleType
-	// 				? DataResult.success(simpleParticleType)
-	// 				: DataResult.error(() -> "Not a SimpleParticleType: " + particleType),
-	// 		particleType -> particleType
-	// 	)
-	// 	.fieldOf("particle_options");
-	// public static final MapCodec<DissolverBlock> CODEC = RecordCodecBuilder.mapCodec(
-	// 	instance -> instance.group(PARTICLE_TYPE_CODEC.forGetter(block -> block.particle), createSettingsCodec()).apply(instance, DissolverBlock::new)
-	// );
-	// protected final SimpleParticleType particle;
-
-    // SimpleParticleType particle, 
     public DissolverBlock(Settings settings) {
 		super(settings);
-		// this.particle = particle;
 	}
 
     @Override
     protected MapCodec<DissolverBlock> getCodec() {
         return CODEC;
     }
-
-    // particle
-    private float offset = 1.1F;
-    private float velocity = 0.01F;
-	@Override
-	public void randomDisplayTick(BlockState state, World world, BlockPos pos, Random random) {
-		super.randomDisplayTick(state, world, pos, random);
-
-        if (random.nextInt(12) != 0) return;
-
-        int randomSide = random.nextInt(8);
-        boolean northSide = randomSide == 0;
-        boolean southSide = randomSide == 1;
-        boolean eastSide = randomSide == 2;
-        boolean westSide = randomSide == 3;
-        boolean topSide = randomSide > 3;
-
-		double x = eastSide ? offset : westSide ? 0 : Math.random();
-		double y = topSide ? offset : Math.random();
-		double z = southSide ? offset : northSide ? 0 : Math.random();
-        
-		world.addParticle(ParticleTypes.END_ROD, pos.getX() + x, pos.getY() + y, pos.getZ() + z, eastSide ? velocity : westSide ? -velocity : 0, topSide ? velocity : 0, southSide ? velocity : northSide ? -velocity : 0);
-		// world.addParticle(ModParticles.CRYSTAL, pos.getX() + x, pos.getY() + y, pos.getZ() + z, eastSide ? velocity : westSide ? -velocity : 0, topSide ? velocity : 0, southSide ? velocity : northSide ? -velocity : 0);
-		// world.addParticle(this.particle, x, y, z, 0.0, 0.0, 0.0);
-	}
 
     @Override
     public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
@@ -95,28 +53,14 @@ public class DissolverBlock extends BlockWithEntity {
             placer.sendMessage(Text.literal("Well done!"));
         }
 
-        if (world instanceof ServerWorld) {
-            // ENTITY
-            CrystalEntity crystalEntity = new CrystalEntity(ModEntities.CRYSTAL_ENTITY, world);
-            crystalEntity.setPosition(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
-            world.spawnEntity(crystalEntity);
-            // world.emitGameEvent(placer, GameEvent.ENTITY_PLACE, pos);
-        }
+        spawnEntity(world, pos);
     }
-
-    // WIP spawn entity again if it's removed & block it not?
     
     @Override
 	public void onBroken(WorldAccess world, BlockPos pos, BlockState state) {
         if (world instanceof ServerWorld) {
-            double x = (double)pos.getX();
-            double y = (double)pos.getY();
-            double z = (double)pos.getZ();
-            List<Entity> list = world.getOtherEntities(null, new Box(x, y, z, x + 1.0F, y + 1.0F, z + 1.0F));
-
-            if (!list.isEmpty()) {
-                list.get(0).remove(Entity.RemovalReason.DISCARDED);
-            }
+            List<Entity> list = blockEntityList((World)world, pos);
+            if (!list.isEmpty()) list.get(0).remove(Entity.RemovalReason.DISCARDED);
         }
 	}
 
@@ -137,7 +81,50 @@ public class DissolverBlock extends BlockWithEntity {
                 player.openHandledScreen((DissolverBlockEntity)blockEntity);
             }
 
+            // check for entity
+            List<Entity> list = blockEntityList(world, pos);
+            if (list.isEmpty()) spawnEntity(world, pos);
+
             return ActionResult.CONSUME;
         }
     }
+
+    private void spawnEntity(World world, BlockPos pos) {
+        if (!(world instanceof ServerWorld)) return;
+
+        CrystalEntity crystalEntity = new CrystalEntity(ModEntities.CRYSTAL_ENTITY, world);
+        crystalEntity.setPosition(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
+        world.spawnEntity(crystalEntity);
+    }
+
+    private List<Entity> blockEntityList(World world, BlockPos pos) {
+        double x = pos.getX();
+        double y = pos.getY();
+        double z = pos.getZ();
+        
+        return world.getOtherEntities(null, new Box(x, y, z, x + 1.0F, y + 1.0F, z + 1.0F));
+    }
+
+    // PARTICLE
+    private float offset = 1.1F;
+    private float velocity = 0.01F;
+	@Override
+	public void randomDisplayTick(BlockState state, World world, BlockPos pos, Random random) {
+		super.randomDisplayTick(state, world, pos, random);
+
+        if (random.nextInt(12) != 0) return;
+
+        int randomSide = random.nextInt(8);
+        boolean northSide = randomSide == 0;
+        boolean southSide = randomSide == 1;
+        boolean eastSide = randomSide == 2;
+        boolean westSide = randomSide == 3;
+        boolean topSide = randomSide > 3;
+
+		double x = eastSide ? offset : westSide ? 0 : Math.random();
+		double y = topSide ? offset : Math.random();
+		double z = southSide ? offset : northSide ? 0 : Math.random();
+        
+		world.addParticle(ParticleTypes.END_ROD, pos.getX() + x, pos.getY() + y, pos.getZ() + z, eastSide ? velocity : westSide ? -velocity : 0, topSide ? velocity : 0, southSide ? velocity : northSide ? -velocity : 0);
+	}
 }

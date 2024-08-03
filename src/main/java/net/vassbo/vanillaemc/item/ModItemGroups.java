@@ -18,7 +18,6 @@ public class ModItemGroups {
 
     private static void addToCustomInventory(DisplayContext displayContext, Entries entries) {
         entries.add(ModItems.CRYSTAL_FRAME_ITEM);
-        // entries.add(ModItems.GLOWING_ITEM);
         entries.add(ModBlocks.DISSOLVER_BLOCK);
     }
 

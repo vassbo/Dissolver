@@ -111,9 +111,9 @@ public class ModCommands {
 
         // LEARNED (unlock all, learn specific items, unlearn)
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> dispatcher.register(
-            createRootCommand("learn")
-            .then(createCommandWithPlayerArg("everything", ItemStackArgumentType.itemStack(registryAccess), LearnItems::everything, LearnItems::everythingPlayer))
-            .then(createCommandWithPlayerArg("forgetall", ItemStackArgumentType.itemStack(registryAccess), LearnItems::forget, LearnItems::forgetPlayer))
+            createRootCommand("emcmemory")
+            .then(createCommandWithPlayerArg("fill", ItemStackArgumentType.itemStack(registryAccess), LearnItems::everything, LearnItems::everythingPlayer))
+            .then(createCommandWithPlayerArg("clear", ItemStackArgumentType.itemStack(registryAccess), LearnItems::forget, LearnItems::forgetPlayer))
             .then(createSubCommandWithPlayerArg("add", "item", ItemStackArgumentType.itemStack(registryAccess), LearnItems::add, LearnItems::addPlayer))
             .then(createSubCommandWithPlayerArg("remove", "item", ItemStackArgumentType.itemStack(registryAccess), LearnItems::remove, LearnItems::removePlayer))
         ));

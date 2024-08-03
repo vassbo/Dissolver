@@ -8,7 +8,6 @@ import net.vassbo.vanillaemc.VanillaEMC;
 
 public class ModItems {
     public static final Item CRYSTAL_FRAME_ITEM = registerItem("crystal_frame_item", new CrystalFrameItem(new Item.Settings()));
-    // public static final Item GLOWING_ITEM = registerItem("glowing_item", new GlowingItem(new Item.Settings()));
 
     // private static void addToVanillaTools(FabricItemGroupEntries entries) {
     //     entries.add(MAGIC_ITEM);

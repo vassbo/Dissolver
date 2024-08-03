@@ -2,19 +2,20 @@ package net.vassbo.vanillaemc.item;
 
 import java.util.List;
 
-import net.minecraft.item.Item;
+import net.minecraft.block.Block;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.vassbo.vanillaemc.helpers.EMCHelper;
 
-public class CrystalFrameItem extends Item {
-    private static String TOOLTIP_TEXT = "item_tooltip.vanillaemc.crystal_frame_item";
+public class DissolverBlockItem extends BlockItem {
+    private static String TOOLTIP_TEXT = "item_tooltip.vanillaemc.dissolver_block_item";
     private static Formatting TOOLTIP_FORMAT = Formatting.GOLD;
 
-    public CrystalFrameItem(Settings settings) {
-		super(settings);
+    public DissolverBlockItem(Block block, Settings settings) {
+		super(block, settings);
 	}
 
     @Override

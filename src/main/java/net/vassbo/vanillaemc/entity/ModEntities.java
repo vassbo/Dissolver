@@ -8,7 +8,7 @@ import net.minecraft.util.Identifier;
 import net.vassbo.vanillaemc.VanillaEMC;
 
 public class ModEntities {
-    public static final EntityType<CrystalEntity> CRYSTAL_ENTITY = EntityType.Builder.create(CrystalEntity::new, SpawnGroup.MISC).dimensions(1, 1).build();
+    public static final EntityType<CrystalEntity> CRYSTAL_ENTITY = EntityType.Builder.create(CrystalEntity::new, SpawnGroup.MISC).dimensions(0.5F, 0.5F).build();
 
     // HELPERS
 

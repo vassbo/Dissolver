@@ -8,6 +8,7 @@ import net.minecraft.inventory.Inventories;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.screen.slot.Slot;
 import net.minecraft.util.collection.DefaultedList;
 import net.vassbo.vanillaemc.helpers.EMCHelper;
 import net.vassbo.vanillaemc.screen.DissolverScreenHandler;
@@ -19,23 +20,30 @@ public class DissolverInventoryInput implements Inventory {
     private final DissolverScreenHandler handler;
     private PlayerEntity player;
 
-    private final int xPos = 7;
-    private final int yPos = 18;
+    private int SLOTS = 3;
 
     public DissolverInventoryInput(DissolverScreenHandler handler, PlayerEntity player) {
-        this(handler, 1, 1, DefaultedList.ofSize(1, ItemStack.EMPTY));
-        this.player = player;
-    }
-
-    public DissolverInventoryInput(DissolverScreenHandler handler, int width, int height, DefaultedList<ItemStack> stacks) {
-        this.stacks = stacks;
+        this.stacks = DefaultedList.ofSize(SLOTS, ItemStack.EMPTY);
         this.handler = handler;
-        this.width = width;
-        this.height = height;
+        this.player = player;
+        this.width = SLOTS;
+        this.height = 1;
     }
 
     public DissolverSlotInput getInputSlot() {
-        return new DissolverSlotInput(this, 0, xPos, yPos);
+        return new DissolverSlotInput(this, 0, 7, 18);
+    }
+
+    public Slot getAdderSlot() {
+        return new Slot(this, 1, 7, 54);
+    }
+
+    public Slot getRemoverSlot() {
+        return new Slot(this, 2, 7, 72);
+    }
+
+    public int slots() {
+        return this.SLOTS;
     }
 
     public int size() {
@@ -75,16 +83,31 @@ public class DissolverInventoryInput implements Inventory {
     }
 
     public void setStack(int slot, ItemStack stack) {
-        if (player == null || player.getWorld().isClient()) return;
+        if (player == null) return;
 
-        boolean SLOT_EMPTY = stack.getItem() == Items.AIR;
-        if (SLOT_EMPTY) return;
+        boolean NOT_HOLDING_ITEM = stack.getItem() == Items.AIR;
+        if (NOT_HOLDING_ITEM) return;
 
-        if (!EMCHelper.addItem(stack, player, this.handler)) {
-            this.stacks.set(slot, stack);
-            this.handler.onContentChanged(this);
-            return;
+        if (!player.getWorld().isClient()) {
+            if (slot == 0) {
+                if (EMCHelper.addItem(stack, player, this.handler)) return;
+            } else if (slot == 1) {
+                // WIP temporarily store items placed here (because they disapear if menu is closed!)
+                String itemId = stack.getItem().toString();
+                EMCHelper.learnItem(player, itemId);
+                this.handler.refresh();
+            } else if (slot == 2) {
+                // WIP temporarily store items placed here (because they disapear if menu is closed!)
+                String itemId = stack.getItem().toString();
+                EMCHelper.forgetItem(player, itemId);
+                this.handler.refresh();
+            }
         }
+
+        if (slot == 0 && player.getWorld().isClient()) return;
+
+        this.stacks.set(slot, stack);
+        this.handler.onContentChanged(this);
     }
 
     public void markDirty() {

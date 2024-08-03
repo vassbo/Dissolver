@@ -1,0 +1,25 @@
+{
+    "display": {
+        "icon": {
+            "id": "vanillaemc:dissolver_block",
+            "count": 1
+        },        
+        "title": {
+            "translate": "advancements.story.place_dissolver.title"
+        },
+        "description": {
+            "translate": "advancements.story.place_dissolver.description"
+        }
+    },
+    "parent": "minecraft:story/mine_diamond",
+    "criteria": {
+        "requirement": {
+            "trigger": "minecraft:placed_block"
+        }
+    },
+    "requirements": [
+        [
+            "vanillaemc:dissolver_block"
+        ]
+    ]
+}
