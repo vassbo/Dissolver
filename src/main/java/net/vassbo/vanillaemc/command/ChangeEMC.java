@@ -13,6 +13,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
+import net.vassbo.vanillaemc.config.ModConfig;
 import net.vassbo.vanillaemc.data.PlayerData;
 import net.vassbo.vanillaemc.data.StateSaverAndLoader;
 import net.vassbo.vanillaemc.helpers.EMCHelper;
@@ -28,6 +29,11 @@ public class ChangeEMC {
     }
 
     public static int changeEMCPlayer(CommandContext<ServerCommandSource> context, String command, PlayerEntity player) {
+        if (!ModConfig.PRIVATE_EMC) {
+            ModCommands.feedback(context, Text.translatable("command.feedback.shared_data").getString());
+            return 1;
+        }
+
         final int value = IntegerArgumentType.getInteger(context, "number");
         
         updateEMCValue(player, command, context, value);
@@ -53,6 +59,11 @@ public class ChangeEMC {
     }
 
     public static int listUserEMC(CommandContext<ServerCommandSource> context, String command) {
+        if (!ModConfig.PRIVATE_EMC) {
+            ModCommands.feedback(context, Text.translatable("command.feedback.shared_data").getString());
+            return 1;
+        }
+
         PlayerEntity player = context.getSource().getPlayer();
         int currentEMC = EMCHelper.getEMCValue(player);
 
@@ -61,13 +72,18 @@ public class ChangeEMC {
     }
 
     public static int getEMC(CommandContext<ServerCommandSource> context, String command) {
+        if (!ModConfig.PRIVATE_EMC) {
+            ModCommands.feedback(context, Text.translatable("command.feedback.shared_data").getString());
+            return 1;
+        }
+
         MinecraftServer server = context.getSource().getServer();
         final String playerName = StringArgumentType.getString(context, "player");
         ServerPlayerEntity player = server.getPlayerManager().getPlayer(playerName);
-
-        if (player == null) {
-            ModCommands.feedback(context, Text.translatable("command.feedback.get.not_found", playerName).getString());
-            return -1;
+        
+        if (!ModConfig.PRIVATE_EMC) {
+            ModCommands.feedback(context, Text.translatable("command.feedback.shared_data").getString());
+            return 1;
         }
 
         PlayerData data = StateSaverAndLoader.getFromUuid(server, player.getUuid());
@@ -77,6 +93,11 @@ public class ChangeEMC {
     }
 
     public static int listEMC(CommandContext<ServerCommandSource> context, String command) {
+        if (!ModConfig.PRIVATE_EMC) {
+            ModCommands.feedback(context, Text.translatable("command.feedback.shared_data").getString());
+            return 1;
+        }
+
         MinecraftServer server = context.getSource().getServer();
         HashMap<String, PlayerData> dataList = StateSaverAndLoader.getFullList(server);
 

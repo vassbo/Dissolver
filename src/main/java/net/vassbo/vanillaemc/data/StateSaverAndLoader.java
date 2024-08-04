@@ -14,11 +14,12 @@ import net.minecraft.world.PersistentState;
 import net.minecraft.world.PersistentStateManager;
 import net.minecraft.world.World;
 import net.vassbo.vanillaemc.VanillaEMC;
+import net.vassbo.vanillaemc.config.ModConfig;
 import net.vassbo.vanillaemc.helpers.EMCHelper;
 
 // https://fabricmc.net/wiki/tutorial:persistent_states#player_specific_persistent_state
 public class StateSaverAndLoader extends PersistentState {
-    // public Integer globalData = 0;
+    public PlayerData sharedData = new PlayerData();
     public HashMap<UUID, PlayerData> players = new HashMap<>();
 
     private static NbtCompound storeData(NbtCompound playerNbt, PlayerData playerData) {
@@ -67,8 +68,6 @@ public class StateSaverAndLoader extends PersistentState {
 
     @Override
     public NbtCompound writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
-        // nbt.putInt("globalData", globalData);
-
         nbt = storePlayersData(nbt, StateSaverAndLoader::storeData);
 
         return nbt;
@@ -79,8 +78,10 @@ public class StateSaverAndLoader extends PersistentState {
     }
 
     private NbtCompound storePlayersData(NbtCompound nbt, StoreDataInterface func) {
-        NbtCompound playersNbt = new NbtCompound();
+        // PLAYER SPECIFIC
 
+        NbtCompound playersNbt = nbt.contains("players") ? nbt.getCompound("players") : new NbtCompound();
+        
         players.forEach((uuid, playerData) -> {
             NbtCompound playerNbt = new NbtCompound();
             playerNbt = func.store(playerNbt, playerData);
@@ -88,6 +89,13 @@ public class StateSaverAndLoader extends PersistentState {
         });
 
         nbt.put("players", playersNbt);
+
+        // GLOBAL DATA
+        
+        NbtCompound globalNbt = new NbtCompound();
+        globalNbt = func.store(globalNbt, sharedData);
+        nbt.put("globalData", globalNbt);
+
         return nbt;
     }
 
@@ -95,7 +103,6 @@ public class StateSaverAndLoader extends PersistentState {
 
     public static StateSaverAndLoader createFromNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
         StateSaverAndLoader state = new StateSaverAndLoader();
-        // state.globalData = nbt.getInt("globalData");
 
         state = getPlayersData(nbt, state, StateSaverAndLoader::getData);
 
@@ -107,8 +114,10 @@ public class StateSaverAndLoader extends PersistentState {
     }
 
     private static StateSaverAndLoader getPlayersData(NbtCompound nbt, StateSaverAndLoader state, GetDataInterface func) {
-        NbtCompound playersNbt = nbt.getCompound("players");
+        // PLAYER SPECIFIC
 
+        NbtCompound playersNbt = nbt.getCompound("players");
+        
         playersNbt.getKeys().forEach(key -> {
             PlayerData playerData = new PlayerData();
             NbtCompound playerNbt = playersNbt.getCompound(key);
@@ -118,6 +127,15 @@ public class StateSaverAndLoader extends PersistentState {
             UUID uuid = UUID.fromString(key);
             state.players.put(uuid, playerData);
         });
+
+        // GLOBAL DATA
+        
+        NbtCompound globalNbt = nbt.getCompound("globalData");
+        PlayerData playerData = new PlayerData();
+
+        playerData = func.get(globalNbt, playerData);
+
+        state.sharedData = playerData;
 
         return state;
     }
@@ -159,8 +177,10 @@ public class StateSaverAndLoader extends PersistentState {
         return getServerState(server);
     }
 
+    // this can also return server state if mod config is not set to "private emc"
     private static PlayerData getPlayerState(LivingEntity player, StateSaverAndLoader serverState) {
-        return serverState.players.computeIfAbsent(player.getUuid(), uuid -> new PlayerData());
+        if (ModConfig.PRIVATE_EMC) return serverState.players.computeIfAbsent(player.getUuid(), uuid -> new PlayerData());
+        return serverState.sharedData;
     }
 
     public static void setPlayerEMC(LivingEntity player, int emc) {
@@ -177,7 +197,9 @@ public class StateSaverAndLoader extends PersistentState {
 
         playerState.EMC = emc;
         
-        serverState.players.put(player.getUuid(), playerState);
+        if (ModConfig.PRIVATE_EMC) serverState.players.put(player.getUuid(), playerState);
+        else serverState.sharedData = playerState;
+
         EMCHelper.sendStateToClient((PlayerEntity)player);
     }
 
@@ -189,7 +211,9 @@ public class StateSaverAndLoader extends PersistentState {
 
         playerState.LEARNED_ITEMS = learnedList;
 
-        serverState.players.put(player.getUuid(), playerState);
+        if (ModConfig.PRIVATE_EMC) serverState.players.put(player.getUuid(), playerState);
+        else serverState.sharedData = playerState;
+
         EMCHelper.sendStateToClient((PlayerEntity)player);
     }
 

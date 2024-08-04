@@ -11,6 +11,7 @@ import net.vassbo.vanillaemc.config.ModConfig;
 import net.vassbo.vanillaemc.data.EMCValues;
 import net.vassbo.vanillaemc.entity.ModEntities;
 import net.vassbo.vanillaemc.event.JoinEvent;
+import net.vassbo.vanillaemc.helpers.RecipeGenerator;
 import net.vassbo.vanillaemc.item.ModItemGroups;
 import net.vassbo.vanillaemc.item.ModItems;
 import net.vassbo.vanillaemc.packets.DataReceiver;
@@ -30,6 +31,7 @@ public class VanillaEMC implements ModInitializer {
 		LOGGER.info("Initializing VanillaEMC!");
 
 		ModConfig.init();
+		RecipeGenerator.init();
 
 		EMCValues.init();
 

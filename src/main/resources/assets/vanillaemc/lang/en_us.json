@@ -25,14 +25,15 @@
     "command.feedback.get.not_found": "Could not find a player with the name '%d'!",
     "command.feedback.list": "§lFull list (%d):",
     "command.feedback.list.user": "You currently have §6%d§r EMC!",
-    "command.feedback.update.give": "Gave user %d EMC. New value: §6",
-    "command.feedback.update.take": "Took %d EMC from user. New value: §6",
-    "command.feedback.update.set": "Set user EMC to §6%d",
+    "command.feedback.update.give": "%d EMC has been given. New value: §6",
+    "command.feedback.update.take": "Took %d EMC. New value: §6",
+    "command.feedback.update.set": "Set EMC to §6%d",
     "command.feedback.memory.fill": "Learned all items!",
     "command.feedback.memory.forget": "Forgot all items ever learned!",
     "command.feedback.memory.add": "Learned %d!",
     "command.feedback.memory.add.fail": "This is already learned!",
     "command.feedback.memory.remove": "Forgot %d!",
     "command.feedback.memory.remove.fail": "Already forgotten!",
-    "command.feedback.player.not_found": "Could not find a player with the name '%d'!"
+    "command.feedback.player.not_found": "Could not find a player with the name '%d'!",
+    "command.feedback.shared_data": "Private EMC is not turned on!"
 }

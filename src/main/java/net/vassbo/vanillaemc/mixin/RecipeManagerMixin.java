@@ -30,10 +30,19 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.profiler.Profiler;
 import net.vassbo.vanillaemc.VanillaEMC;
 import net.vassbo.vanillaemc.data.EMCValues;
+import net.vassbo.vanillaemc.helpers.RecipeGenerator;
 
 @Mixin(RecipeManager.class)
 public class RecipeManagerMixin {
     @Shadow @Final private RegistryWrapper.WrapperLookup registryLookup;
+
+    // CUSTOM RECIPE
+    @Inject(method = "apply", at = @At("HEAD"))
+    public void interceptApply(Map<Identifier, JsonElement> map, ResourceManager resourceManager, Profiler profiler, CallbackInfo info) {
+        if (RecipeGenerator.DISSOLVER_RECIPE != null) {
+            map.put(Identifier.of(VanillaEMC.MOD_ID, "dissolver_block_recipe"), RecipeGenerator.DISSOLVER_RECIPE);
+        }
+    }
 
     @Inject(method = "apply", at = @At("HEAD"))
     private void applyMixin(Map<Identifier, JsonElement> map, ResourceManager resourceManager, Profiler profiler, CallbackInfo info) {

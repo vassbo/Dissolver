@@ -45,19 +45,32 @@ public class EMCValues {
         int LEAVES = 5;
         int BAMBOO = 1; // this * 9 should be dividable by 2
         int COBBLESTONE = 2; // should be at least 2 (because of slabs)
+        int SAND = 2;
         int DEEPSLATE = 4;
         int COPPER = 216;
         int IRON = 225; // dividable by 9
         int GOLD = 1350; // dividable by 9
         int DIAMOND = 4200;
 
+        // CUSTOM MODES
+        String emcMode = ModConfig.MODE.toLowerCase();
+        if (emcMode.contains("skyblock")) {
+            DIRT = 80;
+            SAND = 80;
+            GRASS = 90;
+            IRON = 500;
+            GOLD = 1800;
+            DIAMOND = 8000;
+            // please give feedback on this
+        }
+
         // nature
         EMC_VALUES.put("minecraft:cobblestone", COBBLESTONE);
         EMC_VALUES.put("minecraft:dirt", DIRT);
         EMC_VALUES.put("minecraft:dirt_path", DIRT);
         EMC_VALUES.put("minecraft:farmland", DIRT);
-        EMC_VALUES.put("minecraft:gravel", COBBLESTONE);
-        EMC_VALUES.put("minecraft:suspicious_gravel", COBBLESTONE);
+        EMC_VALUES.put("minecraft:gravel", SAND);
+        EMC_VALUES.put("minecraft:suspicious_gravel", SAND);
         EMC_VALUES.put("minecraft:flint", DEEPSLATE);
         EMC_VALUES.put("minecraft:bamboo", BAMBOO);
         EMC_VALUES.put("minecraft:grass_block", GRASS);
@@ -316,7 +329,7 @@ public class EMCValues {
         int FLOWERS = 8; // at least 8 so dyed glass is more expensive
         EMC_TAG_VALUES.put("minecraft:stone", COBBLESTONE * 2);
         EMC_TAG_VALUES.put("minecraft:logs", LOGS); // dividable by 4
-        EMC_TAG_VALUES.put("minecraft:sand", COBBLESTONE);
+        EMC_TAG_VALUES.put("minecraft:sand", SAND);
         EMC_TAG_VALUES.put("minecraft:flowers", FLOWERS);
         EMC_TAG_VALUES.put("minecraft:leaves", LEAVES);
         EMC_TAG_VALUES.put("minecraft:arrow", 10);

@@ -7,6 +7,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
+import net.vassbo.vanillaemc.config.ModConfig;
 import net.vassbo.vanillaemc.helpers.EMCHelper;
 
 public class LearnItems {
@@ -20,6 +21,11 @@ public class LearnItems {
     }
 
     public static int everythingPlayer(CommandContext<ServerCommandSource> context, String command, PlayerEntity player) {
+        if (!ModConfig.PRIVATE_EMC) {
+            ModCommands.feedback(context, Text.translatable("command.feedback.shared_data").getString());
+            return 1;
+        }
+
         EMCHelper.learnAllItems(player);
         
         ModCommands.feedback(context, Text.translatable("command.feedback.memory.fill").getString());
@@ -36,6 +42,11 @@ public class LearnItems {
     }
 
     public static int forgetPlayer(CommandContext<ServerCommandSource> context, String command, PlayerEntity player) {
+        if (!ModConfig.PRIVATE_EMC) {
+            ModCommands.feedback(context, Text.translatable("command.feedback.shared_data").getString());
+            return 1;
+        }
+
         EMCHelper.forgetAllItems(player);
         
         ModCommands.feedback(context, Text.translatable("command.feedback.memory.forget").getString());
@@ -53,6 +64,11 @@ public class LearnItems {
     }
 
     public static int addPlayer(CommandContext<ServerCommandSource> context, String command, PlayerEntity player) {
+        if (!ModConfig.PRIVATE_EMC) {
+            ModCommands.feedback(context, Text.translatable("command.feedback.shared_data").getString());
+            return 1;
+        }
+
         boolean learned = EMCHelper.learnItem(player, getItemId(context));
 
         if (learned) ModCommands.feedback(context, Text.translatable("command.feedback.memory.add", getItemName(context)).getString());
@@ -72,6 +88,11 @@ public class LearnItems {
     }
 
     public static int removePlayer(CommandContext<ServerCommandSource> context, String command, PlayerEntity player) {
+        if (!ModConfig.PRIVATE_EMC) {
+            ModCommands.feedback(context, Text.translatable("command.feedback.shared_data").getString());
+            return 1;
+        }
+
         boolean removed = EMCHelper.forgetItem(player, getItemId(context));
         
         if (removed) ModCommands.feedback(context, Text.translatable("command.feedback.memory.remove", getItemName(context)).getString());

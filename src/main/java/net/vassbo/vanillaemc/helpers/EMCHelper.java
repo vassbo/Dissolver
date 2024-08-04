@@ -194,9 +194,6 @@ public class EMCHelper {
         }).start();
     }
 
-    // global data
-    // StateSaverAndLoader serverState = StateSaverAndLoader.getServerState(world.getServer());
-
     // TOOLTIP
 
     public static Text tooltipValue(String key) {
