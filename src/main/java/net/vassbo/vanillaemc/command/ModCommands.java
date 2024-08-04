@@ -13,26 +13,29 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.command.argument.ItemStackArgumentType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
+import net.minecraft.world.World;
 import net.vassbo.vanillaemc.VanillaEMC;
+import net.vassbo.vanillaemc.helpers.WirelessDissolver;
 
 public class ModCommands {
     private static void registerCommand(LiteralArgumentBuilder<ServerCommandSource> command) {
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> dispatcher.register(command));
     }
 
-    // private static void createCustomCommand(String command, CommandMethodInterface func) {
-    //     registerCommand(
-    //         createRootCommand(command)
-    //         .executes(context -> {
-    //             VanillaEMC.LOGGER.info("Executed command: " + command);
-    //             return func.execute(context, command);
-    //         })
-    //     );
-    // }
+    private static void createCustomCommand(String command, CommandMethodInterface func) {
+        registerCommand(
+            createRootCommand(command)
+            .executes(context -> {
+                VanillaEMC.LOGGER.info("Executed command: " + command);
+                return func.execute(context, command);
+            })
+        );
+    }
 
     private static LiteralArgumentBuilder<ServerCommandSource> createRootCommand(String command) {
         return literal(command).requires(source -> source.hasPermissionLevel(2)); // requires OP
@@ -42,12 +45,20 @@ public class ModCommands {
         return literal(command).executes((context) -> executeCommand(context, command, func)).then(argument("player", StringArgumentType.string()).executes((context) -> executePlayerCommand(context, command, playerFunc)));
     }
 
-    private static LiteralArgumentBuilder<ServerCommandSource> createSubCommand(String command, String argId, ArgumentType<?> argType, CommandMethodInterface func) {
-        return literal(command).then(argument(argId, argType).executes((context) -> executeCommand(context, command, func)));
+    // private static LiteralArgumentBuilder<ServerCommandSource> createSubCommand(String command, String argId, ArgumentType<?> argType, CommandMethodInterface func) {
+    //     return literal(command).then(argument(argId, argType).executes((context) -> executeCommand(context, command, func)));
+    // }
+
+    private static LiteralArgumentBuilder<ServerCommandSource> createPlayerSubCommand(String command, CommandMethodInterface func) {
+        return literal(command).then(argument("player", StringArgumentType.string()).suggests(new PlayerSuggestionProvider()).executes((context) -> executeCommand(context, command, func)));
     }
 
     private static LiteralArgumentBuilder<ServerCommandSource> createSubCommandWithPlayerArg(String command, String argId, ArgumentType<?> argType, CommandMethodInterface func, CommandMethodPlayerInterface playerFunc) {
-        return literal(command).then(argument(argId, argType).executes((context) -> executeCommand(context, command, func)).then(argument("player", StringArgumentType.string()).executes((context) -> executePlayerCommand(context, command, playerFunc))));
+        return literal(command).then(argument(argId, argType).executes((context) -> executeCommand(context, command, func)).then(argument("player", StringArgumentType.string()).suggests(new PlayerSuggestionProvider()).executes((context) -> executePlayerCommand(context, command, playerFunc))));
+    }
+
+    private static LiteralArgumentBuilder<ServerCommandSource> createItemSubCommandWithPlayerArg(String command, CommandRegistryAccess registryAccess, CommandMethodInterface func, CommandMethodPlayerInterface playerFunc) {
+        return literal(command).then(argument("item", ItemStackArgumentType.itemStack(registryAccess)).suggests(new ItemSuggestionProvider()).executes((context) -> executeCommand(context, command, func)).then(argument("player", StringArgumentType.string()).suggests(new PlayerSuggestionProvider()).executes((context) -> executePlayerCommand(context, command, playerFunc))));
     }
     
     // special example: msg = "\"%s × %s = %s\".formatted(value, value, result)"
@@ -80,8 +91,11 @@ public class ModCommands {
         final String playerName = StringArgumentType.getString(context, "player");
         PlayerEntity player = playerFromName(context, playerName);
 
+        // Player currently has to be logged on to the server,
+        // but it is possible to find & update the player state based on the stored name
+
         if (player == null) {
-            feedback(context, "Could not find a player with the name '" + playerName + "'!");
+            feedback(context, Text.translatable("command.feedback.player.not_found", playerName).getString());
             return -1;
         }
 
@@ -103,7 +117,7 @@ public class ModCommands {
             createRootCommand("emc")
             .executes((context) -> executeCommand(context, "emc", ChangeEMC::listUserEMC))
             .then(literal("list").executes((context) -> executeCommand(context, "list", ChangeEMC::listEMC)))
-            .then(createSubCommand("get", "player", StringArgumentType.string(), ChangeEMC::getEMC))
+            .then(createPlayerSubCommand("get", ChangeEMC::getEMC))
             .then(createSubCommandWithPlayerArg("give", "number", IntegerArgumentType.integer(), ChangeEMC::changeEMC, ChangeEMC::changeEMCPlayer))
             .then(createSubCommandWithPlayerArg("take", "number", IntegerArgumentType.integer(), ChangeEMC::changeEMC, ChangeEMC::changeEMCPlayer))
             .then(createSubCommandWithPlayerArg("set", "number", IntegerArgumentType.integer(), ChangeEMC::changeEMC, ChangeEMC::changeEMCPlayer))
@@ -114,22 +128,19 @@ public class ModCommands {
             createRootCommand("emcmemory")
             .then(createCommandWithPlayerArg("fill", ItemStackArgumentType.itemStack(registryAccess), LearnItems::everything, LearnItems::everythingPlayer))
             .then(createCommandWithPlayerArg("clear", ItemStackArgumentType.itemStack(registryAccess), LearnItems::forget, LearnItems::forgetPlayer))
-            .then(createSubCommandWithPlayerArg("add", "item", ItemStackArgumentType.itemStack(registryAccess), LearnItems::add, LearnItems::addPlayer))
-            .then(createSubCommandWithPlayerArg("remove", "item", ItemStackArgumentType.itemStack(registryAccess), LearnItems::remove, LearnItems::removePlayer))
+            .then(createItemSubCommandWithPlayerArg("add", registryAccess, LearnItems::add, LearnItems::addPlayer))
+            .then(createItemSubCommandWithPlayerArg("remove", registryAccess, LearnItems::remove, LearnItems::removePlayer))
         ));
 
-        // createCustomCommand("openmagic", (context, command) -> {
-        //     PlayerEntity player = context.getSource().getPlayer();
-        //     Vec3d playerPos = player.getPos();
-        //     playerPos.y = 265;
-        //     BlockPos pos = new BlockPos((int)playerPos.x, 256, (int)playerPos.y);
-        //     BlockState state = new MagicBlock(null).getDefaultState();
-        //     player.getWorld().setBlockState(pos, state);
-            
-        //     MagicBlockEntity entity = player.getWorld().getBlockState(pos).getBlockEntity(player.getWorld(), ModBlockEntities.MAGIC_BLOCK_ENTITY);
-        //     player.openHandledScreen(entity);
+        createCustomCommand("opendissolver", (context, command) -> {
+            PlayerEntity player = context.getSource().getPlayer();
+            World world = context.getSource().getWorld();
 
-        //     return 1;
-        // });
+            if (!WirelessDissolver.open(player, world)) {
+                ModCommands.feedback(context, Text.translatable("wireless_open.fail", WirelessDissolver.radius).getString());
+            }
+
+            return 1;
+        });
     }
 }

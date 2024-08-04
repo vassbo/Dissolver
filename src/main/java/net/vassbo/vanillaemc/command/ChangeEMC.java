@@ -12,6 +12,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.Text;
 import net.vassbo.vanillaemc.data.PlayerData;
 import net.vassbo.vanillaemc.data.StateSaverAndLoader;
 import net.vassbo.vanillaemc.helpers.EMCHelper;
@@ -39,13 +40,13 @@ public class ChangeEMC {
 
         if (key == "give") {
             currentValue += inputValue;
-            ModCommands.feedback(context, "Gave user " + inputValue + " EMC. New value: §6" + currentValue);
+            ModCommands.feedback(context, Text.translatable("command.feedback.update.give", inputValue).getString() + currentValue);
         } else if (key == "take") {
             currentValue -= inputValue;
-            ModCommands.feedback(context, "Took " + inputValue + " EMC from user. New value: §6" + currentValue);
+            ModCommands.feedback(context, Text.translatable("command.feedback.update.take", inputValue).getString() + currentValue);
         } else if (key == "set") {
             currentValue = inputValue;
-            ModCommands.feedback(context, "Set user EMC to §6" + currentValue);
+            ModCommands.feedback(context, Text.translatable("command.feedback.update.set", currentValue).getString());
         }
         
         EMCHelper.setEMCValue(player, currentValue);
@@ -55,7 +56,7 @@ public class ChangeEMC {
         PlayerEntity player = context.getSource().getPlayer();
         int currentEMC = EMCHelper.getEMCValue(player);
 
-        ModCommands.feedback(context, "You currently have §6" + currentEMC + "§r EMC!");
+        ModCommands.feedback(context, Text.translatable("command.feedback.list.user", currentEMC).getString());
         return 1;
     }
 
@@ -65,22 +66,21 @@ public class ChangeEMC {
         ServerPlayerEntity player = server.getPlayerManager().getPlayer(playerName);
 
         if (player == null) {
-            ModCommands.feedback(context, "Could not find a player with the name '" + playerName + "'!");
+            ModCommands.feedback(context, Text.translatable("command.feedback.get.not_found", playerName).getString());
             return -1;
         }
 
         PlayerData data = StateSaverAndLoader.getFromUuid(server, player.getUuid());
 
-        ModCommands.feedback(context, "EMC of player: §6" + data.EMC);
+        ModCommands.feedback(context, Text.translatable("command.feedback.get", data.EMC).getString());
         return 1;
     }
 
     public static int listEMC(CommandContext<ServerCommandSource> context, String command) {
         MinecraftServer server = context.getSource().getServer();
-
         HashMap<String, PlayerData> dataList = StateSaverAndLoader.getFullList(server);
 
-        String msg = "§lFull list:§r\n" +
+        String msg = Text.translatable("command.feedback.list", dataList.size()).getString() + "§r\n" +
         dataList.entrySet()
         .stream()
         .map(a -> "- " + a.getKey() + ": §6" + a.getValue().EMC + "§r")

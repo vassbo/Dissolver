@@ -7,8 +7,8 @@ import net.minecraft.screen.ScreenHandler;
 import net.minecraft.text.Text;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
-import net.vassbo.vanillaemc.VanillaEMC;
 import net.vassbo.vanillaemc.screen.DissolverScreenHandler;
+import net.vassbo.vanillaemc.screen.ModScreenHandlers;
 
 public class DissolverBlockEntity extends CustomBlockEntity {
     private DefaultedList<ItemStack> inputStacks;
@@ -21,7 +21,7 @@ public class DissolverBlockEntity extends CustomBlockEntity {
 
     public ScreenHandler createScreenHandler(int syncId, PlayerInventory playerInventory) {
         DissolverScreenHandler handler = new DissolverScreenHandler(syncId, playerInventory);
-        VanillaEMC.activeHandlers.put(playerInventory.player.getUuid(), handler);
+        ModScreenHandlers.activeHandlers.put(playerInventory.player.getUuid(), handler);
         return handler;
     }
 
@@ -45,8 +45,4 @@ public class DissolverBlockEntity extends CustomBlockEntity {
     public ItemStack getRenderStack() {
         return this.getStack(0);
     }
-
-    // test
-
-    public int endCrystalAge = 10;
 }

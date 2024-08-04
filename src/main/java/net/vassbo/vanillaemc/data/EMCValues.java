@@ -13,10 +13,10 @@ import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryKey;
 import net.vassbo.vanillaemc.VanillaEMC;
+import net.vassbo.vanillaemc.config.ModConfig;
 import net.vassbo.vanillaemc.helpers.ItemHelper;
 
 public class EMCValues {
-    private static final boolean INCLUDE_CREATIVE_ITEMS = false;
     private static final HashMap<String, Integer> EMC_VALUES = new HashMap<String, Integer>();
     public static final HashMap<String, Integer> EMC_TAG_VALUES = new HashMap<String, Integer>();
 
@@ -33,6 +33,12 @@ public class EMCValues {
         // Some of these can be crafted/smelted etc. into other items.
         // This is automatically queried.
         // NOTE: items with block recipes should be dividable by 9 etc. to prevent reduced values (INFINITE EMC)
+
+        // These does not show up with EMC NBT data, but they still work:
+        // Shield, Crossbow, Banners & Banner patterns
+
+        // Currently missing (probably not added):
+        // Potions (including water bottle), Enchanted books, etc. (see more down below)
 
         int DIRT = 1;
         int GRASS = 2;
@@ -253,7 +259,7 @@ public class EMCValues {
         EMC_VALUES.put("minecraft:totem_of_undying", 60000);
 
         // creative
-        if (INCLUDE_CREATIVE_ITEMS) {
+        if (ModConfig.CREATIVE_ITEMS) {
             EMC_VALUES.put("minecraft:bedrock", 1000000);
             EMC_VALUES.put("minecraft:barrier", 1000000);
             EMC_VALUES.put("minecraft:end_portal_frame", 800000);
@@ -298,11 +304,11 @@ public class EMCValues {
         // EMC_VALUES.put("minecraft:splash_potion", 800);
         // EMC_VALUES.put("minecraft:lingering_potion", 800);
         // water bottle
-        // banner pattern
-        // EMC_VALUES.put("minecraft:flow_banner_pattern", 300);
-        // EMC_VALUES.put("minecraft:guster_banner_pattern", 300);
-        // EMC_VALUES.put("minecraft:piglin_banner_pattern", 300);
-        // EMC_VALUES.put("minecraft:globe_banner_pattern", 300);
+        // banner pattern (special ones)
+        EMC_VALUES.put("minecraft:flow_banner_pattern", 200);
+        EMC_VALUES.put("minecraft:guster_banner_pattern", 200);
+        EMC_VALUES.put("minecraft:piglin_banner_pattern", 200);
+        EMC_VALUES.put("minecraft:globe_banner_pattern", 200);
         
         // BY TAGS (https://mcreator.net/wiki/minecraft-item-tags-list)
         // nature
@@ -325,11 +331,10 @@ public class EMCValues {
         EMC_TAG_VALUES.put("minecraft:emerald_ores", 1600);
 
         // CUSTOM
-        // EMC_VALUES.put("minecraft:chest", LOGS * 2);
         EMC_VALUES.put("minecraft:charcoal", COAL); // same as coal because it should be the same emc!
-        // WIP THESE DON'T WORK::
-        // EMC_VALUES.put("minecraft:shield", IRON + (LOGS / 4 * 6)); // this recipe did was not found
-        // EMC_VALUES.put("minecraft:crossbow", 704); // this recipe did was not found (IRON+(STICK*2)+(STRING*2)+TRIPWIRE_HOOK)
+        EMC_VALUES.put("minecraft:exposed_chiseled_copper", (int)(COPPER * 4)); // it's not set to what it should be (lower than the standard variant)
+        EMC_VALUES.put("minecraft:waxed_exposed_chiseled_copper", (int)(COPPER * 4.2)); // it's not set to what it should be (lower than the standard variant)
+        // waxed weathered chiseled copper is currently higher than the waxed oxidized chiseled copper
 
         // GENERATE
 
@@ -478,7 +483,7 @@ public class EMCValues {
     private static List<String> creative_items = Arrays.asList("spawn_egg", "command_block", "bedrock", "barrier", "structure_block", "jigsaw", "spawner", "vault", "end_portal_frame", "budding_amethyst", "reinforced_deepslate");
     private static boolean checkItem(String itemId) {
         // add dynamic (creative items)
-        if (INCLUDE_CREATIVE_ITEMS) {
+        if (ModConfig.CREATIVE_ITEMS) {
             if (itemId.contains("spawn_egg")) {
                 EMC_VALUES.put(itemId, 100000);
             }
@@ -489,7 +494,7 @@ public class EMCValues {
             if (itemId.contains(itemPart)) return true;
         }
 
-        if (!EMC_VALUES.containsKey(itemId) && !unused.contains(itemId) && !itemId.contains("bucket") && !itemId.contains("potion") && !itemId.contains("banner_pattern") && !itemId.contains("infested_") && itemId != "minecraft:air") {
+        if (!EMC_VALUES.containsKey(itemId) && !unused.contains(itemId) && !itemId.contains("bucket") && !itemId.contains("potion") && !itemId.contains("infested_") && itemId != "minecraft:air") {
             VanillaEMC.LOGGER.info("No EMC value for item: " + ItemHelper.getName(ItemHelper.getById(itemId)) + " (" + itemId + ")");
             return false;
         }
@@ -512,30 +517,7 @@ public class EMCValues {
     private static final HashMap<String, List<String>> PARENTS = new HashMap<String, List<String>>();
     private static void checkRecipe(Map.Entry<String, List<String>> recipe) {
         String id = recipe.getKey();
-        if (COMPLETED.contains(id)) {
-            // // WIP move if useful (only needed by copper)
-            // // double check value (average might have changed)
-            // String[] parts = id.split("__");
-            // String resultId = parts[0];
-            // int resultCount = Integer.parseInt(parts[1]);
-            // int extraEMC = Integer.parseInt(parts[2]); // cooking
-            // if (EMC_VALUES.containsKey(resultId)) return;
-            // if (RECIPE_ITEM_VALUES.containsKey(resultId) && RECIPE_ITEM_VALUES.get(resultId).size() > 1) {
-            //     List<String> ingredients = recipe.getValue();
-            //     int totalInputEMC = combineEMC(ingredients);
-            //     List<Integer> values = new ArrayList<>();
-            //     if (RECIPE_ITEM_VALUES.containsKey(resultId)) values = RECIPE_ITEM_VALUES.get(resultId);
-            //     List<Integer> oldValues = new ArrayList<Integer>(values);
-            //     totalInputEMC = totalInputEMC / resultCount + extraEMC; // divide value on output item count
-            //     if (totalInputEMC < 1) totalInputEMC = 1; // round up to 1
-            //     if (values.contains(totalInputEMC)) return; // same value
-            //     values.add(totalInputEMC);
-            //     VanillaEMC.LOGGER.info("CHANGED ITEM EMC OF ITEM: " + resultId + " FROM:" + oldValues + ". TO: " + values);
-            //     RECIPE_ITEM_VALUES.put(resultId, values);
-            //     previousCompletedSize--;
-            // }
-            return;
-        }
+        if (COMPLETED.contains(id)) return;
 
         if (EMC_VALUES.containsKey(id.split("__")[0])) {
             COMPLETED.add(id);

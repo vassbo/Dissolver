@@ -6,6 +6,7 @@ import net.minecraft.command.argument.ItemStackArgumentType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.text.Text;
 import net.vassbo.vanillaemc.helpers.EMCHelper;
 
 public class LearnItems {
@@ -14,14 +15,14 @@ public class LearnItems {
 
         EMCHelper.learnAllItems(player);
         
-        ModCommands.feedback(context, "Learned all items!");
+        ModCommands.feedback(context, Text.translatable("command.feedback.memory.fill").getString());
         return 1;
     }
 
     public static int everythingPlayer(CommandContext<ServerCommandSource> context, String command, PlayerEntity player) {
         EMCHelper.learnAllItems(player);
         
-        ModCommands.feedback(context, "Learned all items!");
+        ModCommands.feedback(context, Text.translatable("command.feedback.memory.fill").getString());
         return 1;
     }
 
@@ -30,44 +31,52 @@ public class LearnItems {
 
         EMCHelper.forgetAllItems(player);
         
-        ModCommands.feedback(context, "Forgot all items ever learned!");
+        ModCommands.feedback(context, Text.translatable("command.feedback.memory.forget").getString());
         return 1;
     }
 
     public static int forgetPlayer(CommandContext<ServerCommandSource> context, String command, PlayerEntity player) {
         EMCHelper.forgetAllItems(player);
         
-        ModCommands.feedback(context, "Forgot all items ever learned!");
+        ModCommands.feedback(context, Text.translatable("command.feedback.memory.forget").getString());
         return 1;
     }
 
     public static int add(CommandContext<ServerCommandSource> context, String command) {
         PlayerEntity player = context.getSource().getPlayer();
-        EMCHelper.learnItem(player, getItemId(context));
+        boolean learned = EMCHelper.learnItem(player, getItemId(context));
 
-        ModCommands.feedback(context, "Learned " + getItemName(context) + "!");
+        if (learned) ModCommands.feedback(context, Text.translatable("command.feedback.memory.add", getItemName(context)).getString());
+        else ModCommands.feedback(context, Text.translatable("command.feedback.memory.add.fail").getString());
+
         return 1;
     }
 
     public static int addPlayer(CommandContext<ServerCommandSource> context, String command, PlayerEntity player) {
-        EMCHelper.learnItem(player, getItemId(context));
+        boolean learned = EMCHelper.learnItem(player, getItemId(context));
 
-        ModCommands.feedback(context, "Learned " + getItemName(context) + "!");
+        if (learned) ModCommands.feedback(context, Text.translatable("command.feedback.memory.add", getItemName(context)).getString());
+        else ModCommands.feedback(context, Text.translatable("command.feedback.memory.add.fail").getString());
+
         return 1;
     }
 
     public static int remove(CommandContext<ServerCommandSource> context, String command) {
         PlayerEntity player = context.getSource().getPlayer();
-        EMCHelper.forgetItem(player, getItemId(context));
+        boolean removed = EMCHelper.forgetItem(player, getItemId(context));
 
-        ModCommands.feedback(context, "Forgot " + getItemName(context) + "!");
+        if (removed) ModCommands.feedback(context, Text.translatable("command.feedback.memory.remove", getItemName(context)).getString());
+        else ModCommands.feedback(context, Text.translatable("command.feedback.memory.remove.fail").getString());
+
         return 1;
     }
 
     public static int removePlayer(CommandContext<ServerCommandSource> context, String command, PlayerEntity player) {
-        EMCHelper.forgetItem(player, getItemId(context));
+        boolean removed = EMCHelper.forgetItem(player, getItemId(context));
         
-        ModCommands.feedback(context, "Forgot " + getItemName(context) + "!");
+        if (removed) ModCommands.feedback(context, Text.translatable("command.feedback.memory.remove", getItemName(context)).getString());
+        else ModCommands.feedback(context, Text.translatable("command.feedback.memory.remove.fail").getString());
+
         return 1;
     }
 

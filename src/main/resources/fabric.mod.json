@@ -6,8 +6,9 @@
     "description": "This mod adds EMC to the vanilla game so you can tranmutate learned items.",
     "authors": ["Vassbo"],
     "contact": {
-        "homepage": "",
-        "sources": "https://github.com/vassbo/VanillaEMC"
+        "homepage": "https://github.com/vassbo/VanillaEMC",
+        "sources": "https://github.com/vassbo/VanillaEMC",
+        "issues": "https://github.com/vassbo/VanillaEMC/issues"
     },
     "license": "CC0-1.0",
     "icon": "assets/vanillaemc/icon.png",

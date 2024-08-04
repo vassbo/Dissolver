@@ -5,6 +5,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.vassbo.vanillaemc.VanillaEMC;
 import net.vassbo.vanillaemc.packets.serverbound.ClientPayload;
+import net.vassbo.vanillaemc.screen.ModScreenHandlers;
 
 public class DataReceiver {
     public static void init() {
@@ -25,9 +26,9 @@ public class DataReceiver {
 
 	private static void receivedData(PlayerEntity player, String messageId, String data) {
         if (messageId.contains("search")) {
-            VanillaEMC.activeHandlers.get(player.getUuid()).search(data);
+            ModScreenHandlers.activeHandlers.get(player.getUuid()).search(data);
         } else if (messageId.contains("scroll")) {
-            VanillaEMC.activeHandlers.get(player.getUuid()).scrollItems(stringToFloat(data));
+            ModScreenHandlers.activeHandlers.get(player.getUuid()).scrollItems(stringToFloat(data));
         } else {
             VanillaEMC.LOGGER.info("RECEIVED MESSAGE FROM CLIENT: " + messageId);
         }

@@ -92,12 +92,10 @@ public class DissolverInventoryInput implements Inventory {
             if (slot == 0) {
                 if (EMCHelper.addItem(stack, player, this.handler)) return;
             } else if (slot == 1) {
-                // WIP temporarily store items placed here (because they disapear if menu is closed!)
                 String itemId = stack.getItem().toString();
                 EMCHelper.learnItem(player, itemId);
                 this.handler.refresh();
             } else if (slot == 2) {
-                // WIP temporarily store items placed here (because they disapear if menu is closed!)
                 String itemId = stack.getItem().toString();
                 EMCHelper.forgetItem(player, itemId);
                 this.handler.refresh();

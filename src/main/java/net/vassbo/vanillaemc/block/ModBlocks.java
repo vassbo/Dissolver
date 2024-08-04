@@ -1,7 +1,10 @@
 package net.vassbo.vanillaemc.block;
 
+import java.util.function.ToIntFunction;
+
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.item.BlockItem;
@@ -16,15 +19,16 @@ import net.vassbo.vanillaemc.block.entity.DissolverBlockEntity;
 import net.vassbo.vanillaemc.item.DissolverBlockItem;
 
 public class ModBlocks {
-    public static final Block DISSOLVER_BLOCK = registerBlock("dissolver_block", new DissolverBlock(AbstractBlock.Settings.copy(Blocks.NETHERITE_BLOCK).sounds(BlockSoundGroup.AMETHYST_BLOCK).nonOpaque()));
+    // DISSOLVER
+    private static final Block _DISSOLVER_BLOCK = new DissolverBlock(AbstractBlock.Settings.copy(Blocks.NETHERITE_BLOCK).sounds(BlockSoundGroup.AMETHYST_BLOCK).luminance(getLuminance(12)).nonOpaque());
+    public static final DissolverBlockItem DISSOLVER_BLOCK_ITEM = new DissolverBlockItem(_DISSOLVER_BLOCK, new Item.Settings().rarity(Rarity.RARE));
+    public static final Block DISSOLVER_BLOCK = registerBlock("dissolver_block", _DISSOLVER_BLOCK, DISSOLVER_BLOCK_ITEM);
     public static final BlockEntityType<DissolverBlockEntity> DISSOLVER_BLOCK_ENTITY = registerBlockEntity("dissolver_block_entity", DISSOLVER_BLOCK);
-    // public static final DissolverBlockItem DISSOLVER_BLOCK_ITEM = new DissolverBlockItem(DISSOLVER_BLOCK, new Item.Settings().rarity(Rarity.RARE));
     
     // HELPERS
     
-    private static Block registerBlock(String id, Block block) {
-        DissolverBlockItem DISSOLVER_BLOCK_ITEM = new DissolverBlockItem(block, new Item.Settings().rarity(Rarity.RARE));
-        registerBlockItem(id, DISSOLVER_BLOCK_ITEM); // WIP
+    private static Block registerBlock(String id, Block block, BlockItem blockItem) {
+        registerBlockItem(id, blockItem);
         return Registry.register(Registries.BLOCK, Identifier.of(VanillaEMC.MOD_ID, id), block);
     }
 
@@ -38,6 +42,15 @@ public class ModBlocks {
 
     private static Item registerBlockItem(String id, BlockItem blockItem) {
         return Registry.register(Registries.ITEM, Identifier.of(VanillaEMC.MOD_ID, id), blockItem);
+    }
+    
+    private static ToIntFunction<BlockState> getLuminance(int luminance) {
+        return new ToIntFunction<BlockState>() {
+            @Override
+            public int applyAsInt(BlockState value) {
+                return luminance;
+            }
+        };
     }
 
     // INITIALIZE

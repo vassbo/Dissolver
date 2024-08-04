@@ -8,6 +8,7 @@ import net.minecraft.client.particle.EndRodParticle;
 import net.minecraft.client.render.RenderLayer;
 import net.vassbo.vanillaemc.block.ModBlocks;
 import net.vassbo.vanillaemc.entity.ModEntities;
+import net.vassbo.vanillaemc.overlay.EMCOverlay;
 import net.vassbo.vanillaemc.packets.DataReceiverClient;
 import net.vassbo.vanillaemc.particle.ModParticles;
 import net.vassbo.vanillaemc.render.CrystalEntityRenderer;
@@ -28,7 +29,6 @@ public class VanillaEMCClient implements ClientModInitializer {
 		// particle
 		ParticleFactoryRegistry.getInstance().register(ModParticles.CRYSTAL, EndRodParticle.Factory::new);
 
-		// only enable if setting for it is turned on!!
-		// EMCOverlay.init();
+		EMCOverlay.init();
 	}
 }

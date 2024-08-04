@@ -99,7 +99,7 @@ public class EMCHelper {
 
         // calculated new EMC (from DissolverInventoryInput)
         int itemCount = itemStack.getCount();
-        int addedEmcValue = emcValue * itemCount;
+        int addedEmcValue = (int)(emcValue * itemCount * ItemHelper.getDurabilityPercentage(itemStack));
 
         learnItem(player, itemId);
 
@@ -117,9 +117,9 @@ public class EMCHelper {
 
     // LEARN
 
-    public static void learnItem(PlayerEntity player, String itemId) {
+    public static boolean learnItem(PlayerEntity player, String itemId) {
         List<String> learnedList = StateSaverAndLoader.getPlayerState(player).LEARNED_ITEMS;
-        if (learnedList.contains(itemId)) return;
+        if (learnedList.contains(itemId)) return false;
 
         learnedList.add(itemId);
         StateSaverAndLoader.setPlayerLearned(player, learnedList);
@@ -129,11 +129,13 @@ public class EMCHelper {
             wait(50);
             sendMessageToClient(player, "emc.action.stored_short");
         }).start();
+
+        return true;
     }
 
-    public static void forgetItem(PlayerEntity player, String itemId) {
+    public static boolean forgetItem(PlayerEntity player, String itemId) {
         List<String> learnedList = StateSaverAndLoader.getPlayerState(player).LEARNED_ITEMS;
-        if (!learnedList.contains(itemId)) return;
+        if (!learnedList.contains(itemId)) return false;
 
         learnedList.remove(itemId);
         StateSaverAndLoader.setPlayerLearned(player, learnedList);
@@ -143,6 +145,8 @@ public class EMCHelper {
             wait(50);
             sendMessageToClient(player, "emc.action.removed_short");
         }).start();
+
+        return true;
     }
 
     public static void learnAllItems(PlayerEntity player) {
@@ -196,11 +200,15 @@ public class EMCHelper {
     // TOOLTIP
 
     public static Text tooltipValue(String key) {
+        return tooltipValue(key, 1);
+    }
+
+    public static Text tooltipValue(String key, double reducedEmc) {
         Integer EMC = EMCValues.get(key);
         Text text = Text.literal("");
         if (EMC == 0) return text;
 
-        return Text.translatable("item_tooltip.vanillaemc.emc", EMC);
+        return Text.translatable("item_tooltip.vanillaemc.emc", (int)(EMC * reducedEmc));
     }
 
     // HELPERS

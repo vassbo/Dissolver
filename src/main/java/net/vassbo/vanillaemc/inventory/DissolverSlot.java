@@ -81,8 +81,6 @@ public class DissolverSlot extends Slot {
     // often called by double clicking from another inventory
     public ItemStack takeStackRange(int min, int max, PlayerEntity player) {
         if (player.getServer() == null) return ItemStack.EMPTY;
-        // WIP prevent double clicking to get stack?
-        // return ItemStack.EMPTY;
         
         Optional<ItemStack> optional = this.tryTakeStackRange(min, max, player);
         optional.ifPresent((stack) -> {

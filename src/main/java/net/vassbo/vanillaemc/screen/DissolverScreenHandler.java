@@ -12,6 +12,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.vassbo.vanillaemc.data.EMCValues;
 import net.vassbo.vanillaemc.data.PlayerData;
 import net.vassbo.vanillaemc.data.StateSaverAndLoader;
@@ -149,21 +150,11 @@ public class DissolverScreenHandler extends ScreenHandler {
         int emcValue = EMCValues.get(stack.getItem().toString());
 
         if (emcValue == 0) {
-            // WIP set red nbt data
             return stack;
         }
 
         if (emcValue > playerEMC) {
-            // WIP set red nbt data
-            // VanillaEMC.LOGGER.info("DATA: " + stack.getItem().getTooltipData(stack));
-            // Item item = stack.getItem();
-            // TooltipContext context = item.TooltipContext();
-            // List<Text> tooltip = new ArrayList<>();
-            // tooltip.add(Text.literal("HELLO"));
-            // VanillaEMC.LOGGER.info("TT: " + tooltip);
-            // item.appendTooltip(stack, context, tooltip, TooltipType.BASIC);
-            // VanillaEMC.LOGGER.info("TT22: " + item.getTooltipData(item.getDefaultStack()));
-            // return item.getDefaultStack();
+            // optionally change the item name/nbt to red, etc.
             return stack;
         }
 
@@ -321,6 +312,32 @@ public class DissolverScreenHandler extends ScreenHandler {
         }
 
         return newStack;
+    }
+
+    // CLOSING
+    
+    @Override
+	public void onClosed(PlayerEntity player) {
+        super.onClosed(player);
+
+		if (player instanceof ServerPlayerEntity) {
+            int adderSlotIndex = this.slots.size() - 2;
+            int removerSlotIndex = this.slots.size() - 3;
+            dropStackInSlot(adderSlotIndex);
+            dropStackInSlot(removerSlotIndex);
+		}
+	}
+
+    private void dropStackInSlot(int slotIndex) {
+        ItemStack itemStack = this.slots.get(slotIndex).getStack();
+
+        if (!itemStack.isEmpty()) {
+            if (player.isAlive() && !((ServerPlayerEntity)player).isDisconnected()) {
+                player.getInventory().offerOrDrop(itemStack);
+            } else {
+                player.dropItem(itemStack, false);
+            }
+        }
     }
 
     // EXTRA

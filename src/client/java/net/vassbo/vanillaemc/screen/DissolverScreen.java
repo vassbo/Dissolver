@@ -44,8 +44,9 @@ public class DissolverScreen extends HandledScreen<DissolverScreenHandler> {
         this.y = (this.height - this.backgroundHeight) / 2;
 
         // titleY = 1000;
-        // playerInventoryTitleY = 1000;
         // this.titleX = (this.backgroundWidth - this.textRenderer.getWidth(this.title)) / 2;
+		this.playerInventoryTitleX = 31;
+		this.playerInventoryTitleY = this.backgroundHeight - 93;
         
         // search box
         this.searchBox = new TextFieldWidget(this.textRenderer, this.x + 104, this.y + 6, 80, 9, Text.translatable("itemGroup.search"));
@@ -98,7 +99,7 @@ public class DissolverScreen extends HandledScreen<DissolverScreenHandler> {
     @Override
     protected void drawForeground(DrawContext context, int mouseX, int mouseY) {
         // context.drawText(this.textRenderer, this.title, this.titleX, this.titleY, 4210752, false);
-        // context.drawText(this.textRenderer, this.playerInventoryTitle, this.playerInventoryTitleX, this.playerInventoryTitleY, 4210752, false);
+        context.drawText(this.textRenderer, this.playerInventoryTitle, this.playerInventoryTitleX, this.playerInventoryTitleY, 4210752, false);
 
         renderText(context, 33, 6);
     }
@@ -113,7 +114,7 @@ public class DissolverScreen extends HandledScreen<DissolverScreenHandler> {
         String CUSTOM_MSG = PlayerDataClient.MESSAGE;
         if (CUSTOM_MSG.isEmpty()) {
             if (PlayerDataClient.EMC == 0) {
-                return Text.translatable("emc.empty").toString();
+                return Text.translatable("emc.empty").getString();
             }
 
             String emc = NumberHelpers.format(PlayerDataClient.EMC);

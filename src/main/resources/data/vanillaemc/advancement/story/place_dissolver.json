@@ -13,13 +13,25 @@
     },
     "parent": "minecraft:story/mine_diamond",
     "criteria": {
-        "requirement": {
+        "dissolver": {
+            "conditions": {
+                "location": [
+                    {
+                        "condition": "minecraft:location_check",
+                        "predicate": {
+                        "block": {
+                            "blocks": "vanillaemc:dissolver_block"
+                        }
+                        }
+                    }
+                ]
+            },
             "trigger": "minecraft:placed_block"
         }
     },
     "requirements": [
         [
-            "vanillaemc:dissolver_block"
+            "dissolver"
         ]
     ]
 }

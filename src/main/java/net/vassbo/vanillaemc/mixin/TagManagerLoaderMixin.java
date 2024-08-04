@@ -65,7 +65,7 @@ public abstract class TagManagerLoaderMixin {
         String tagIdString = tagId.toString();
 
         if (!EMCValues.EMC_TAG_VALUES.containsKey(tagIdString)) {
-            // WIP: once many items have EMC this can be logged only if it has not items that have EMC!
+            // this will also log tags unrelated to crafting
             // String firstItem = itemIds.get(0);
             // VanillaEMC.LOGGER.info("FOUND TAG WITH NO EMC: " + tagId + " ITEM: " + firstItem);
             return;

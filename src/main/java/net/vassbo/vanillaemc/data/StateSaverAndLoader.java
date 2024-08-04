@@ -10,7 +10,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.PlayerManager;
 import net.minecraft.world.PersistentState;
 import net.minecraft.world.PersistentStateManager;
 import net.minecraft.world.World;
@@ -23,6 +22,7 @@ public class StateSaverAndLoader extends PersistentState {
     public HashMap<UUID, PlayerData> players = new HashMap<>();
 
     private static NbtCompound storeData(NbtCompound playerNbt, PlayerData playerData) {
+        if (playerData.NAME != "") playerNbt.putString("NAME", playerData.NAME);
         playerNbt.putInt("EMC", playerData.EMC);
         playerNbt = storeList(playerNbt, "LEARNED_ITEMS", playerData.LEARNED_ITEMS);
 
@@ -30,6 +30,7 @@ public class StateSaverAndLoader extends PersistentState {
     }
 
     private static PlayerData getData(NbtCompound playerNbt, PlayerData playerData) {
+        playerData.NAME = playerNbt.getString("NAME");
         playerData.EMC = playerNbt.getInt("EMC");
         playerData.LEARNED_ITEMS = getList(playerNbt, "LEARNED_ITEMS");
 
@@ -168,6 +169,12 @@ public class StateSaverAndLoader extends PersistentState {
         StateSaverAndLoader serverState = getSaver(player);
         PlayerData playerState = getPlayerState(player, serverState);
         
+        // store player name
+        if (playerState.NAME == "") {
+            String playerName = player.getDisplayName().getString();
+            playerState.NAME = playerName;
+        }
+
         playerState.EMC = emc;
         
         serverState.players.put(player.getUuid(), playerState);
@@ -195,12 +202,10 @@ public class StateSaverAndLoader extends PersistentState {
 
     public static HashMap<String, PlayerData> getFullList(MinecraftServer server) {
         StateSaverAndLoader serverState = getServerState(server);
-        PlayerManager playerManager = server.getPlayerManager();
         HashMap<String, PlayerData> playersData = new HashMap<>();
 
         serverState.players.forEach((uuid, data) -> {
-            String playerName = playerManager.getPlayer(uuid).getDisplayName().getString();
-            playersData.put(playerName, data);
+            playersData.put(data.NAME == "" ? uuid.toString() : data.NAME, data);
         });
 
         return playersData;

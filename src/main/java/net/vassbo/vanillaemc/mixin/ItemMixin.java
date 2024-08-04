@@ -13,36 +13,16 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.text.Text;
 import net.vassbo.vanillaemc.helpers.EMCHelper;
+import net.vassbo.vanillaemc.helpers.ItemHelper;
 
 @Mixin(Item.class)
 public class ItemMixin {
-    // @Unique
-    // private static final String customId = "stone";
-
-	// @Inject(at = @At("HEAD"), method = "appendTooltip")
-	// private void init(CallbackInfo info) {
-	// 	// This code is injected into the start of MinecraftServer.loadWorld()V
-	// }
-
     @Inject(at = @At("RETURN"), method = "appendTooltip", cancellable = true)
-    // private void appendTooltip(ItemStack stack, World world, List<Text> tooltip, TooltipContext context, CallbackInfo ci) {
     public void appendTooltip(ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipType type, CallbackInfo ci) {
         String itemId = stack.getItem().toString();
-        // VanillaEMC.LOGGER.info("ITEM ID: " + itemId);
 
         // add emc value
-        Text formattedText = EMCHelper.tooltipValue(itemId);
+        Text formattedText = EMCHelper.tooltipValue(itemId, ItemHelper.getDurabilityPercentage(stack));
         if (!"".equals(formattedText.getLiteralString())) tooltip.add(formattedText);
-
-        // if (stack.nbt != null) {
-        //     VanillaEMC.LOGGER.info("NBT: " + nbt);
-        //     if (nbt.contains(customId)) {
-        //         String key = "nucleoplasm." + nbt.getString(customId);
-        //         String varietyKey = "nucleoplasm.variety";
-        //         MutableText variety = Language.getInstance().hasTranslation(varietyKey) ? Text.translatable(varietyKey) : Text.literal("variety");
-        //         MutableText text = Language.getInstance().hasTranslation(key) ? Text.translatable(key) : Text.literal(key.replace("nucleoplasm.", ""));
-        //         tooltip.add(variety.append(text));
-        //     }
-        // }
     }
 }
