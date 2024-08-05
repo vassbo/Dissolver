@@ -1,6 +1,9 @@
 package net.vassbo.vanillaemc.block.entity;
 
 import java.util.Iterator;
+
+import org.jetbrains.annotations.Nullable;
+
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
@@ -12,6 +15,7 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.ContainerLock;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.inventory.Inventory;
+import net.minecraft.inventory.SidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.RegistryWrapper;
@@ -24,9 +28,9 @@ import net.minecraft.text.Text.Serialization;
 import net.minecraft.util.Nameable;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
-import org.jetbrains.annotations.Nullable;
+import net.minecraft.util.math.Direction;
 
-public abstract class CustomBlockEntity extends BlockEntity implements Inventory, NamedScreenHandlerFactory, Nameable {
+public abstract class CustomBlockEntity extends BlockEntity implements SidedInventory, NamedScreenHandlerFactory, Nameable {
     private ContainerLock lock;
     @Nullable
     private Text customName;
@@ -161,5 +165,12 @@ public abstract class CustomBlockEntity extends BlockEntity implements Inventory
         nbt.remove("CustomName");
         nbt.remove("Lock");
         nbt.remove("Items");
+    }
+
+    // HOPPER/DROPPER INSERT
+    
+    @Override
+    public int[] getAvailableSlots(Direction side) {
+        return new int[0];
     }
 }

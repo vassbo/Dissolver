@@ -6,7 +6,9 @@ import java.util.List;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.text.Text;
+import net.minecraft.world.World;
 import net.vassbo.vanillaemc.VanillaEMC;
 import net.vassbo.vanillaemc.data.EMCValues;
 import net.vassbo.vanillaemc.data.PlayerData;
@@ -15,6 +17,24 @@ import net.vassbo.vanillaemc.packets.DataSender;
 import net.vassbo.vanillaemc.screen.DissolverScreenHandler;
 
 public class EMCHelper {
+    public static boolean serverAddItem(World world, String itemId, int addedValue) {
+        MinecraftServer server = world.getServer();
+        
+        PlayerData globalData = StateSaverAndLoader.getGlobalData(server);
+        List<String> learnedList = globalData.LEARNED_ITEMS;
+        if (learnedList.contains(itemId)) return false;
+
+        learnedList.add(itemId);
+        StateSaverAndLoader.setGlobalLearned(server, learnedList);
+
+        int currentValue = globalData.EMC;
+        int newValue = currentValue += addedValue;
+        
+        StateSaverAndLoader.setGlobalEMC(server, newValue);
+
+        return true;
+    }
+
     public static void addEMCValue(PlayerEntity player, int addedValue) {
         if (player.getServer() == null) return;
 
@@ -90,6 +110,19 @@ public class EMCHelper {
     }
 
     // ADD
+
+    // added from another inventory & not private EMC
+    public static boolean addItem(ItemStack itemStack, World world) {
+        String itemId = itemStack.getItem().toString();
+        int emcValue = EMCValues.get(itemId);
+
+        if (!checkValidEMC(emcValue, itemId, Action.ADD)) return false;
+
+        int itemCount = itemStack.getCount();
+        int addedEmcValue = (int)(emcValue * itemCount * ItemHelper.getDurabilityPercentage(itemStack));
+
+        return serverAddItem(world, itemId, addedEmcValue);
+    }
 
     public static boolean addItem(ItemStack itemStack, PlayerEntity player, DissolverScreenHandler handler) {
         String itemId = itemStack.getItem().toString();

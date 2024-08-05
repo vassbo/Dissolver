@@ -58,8 +58,11 @@ public class CrystalEntityRenderer extends EntityRenderer<CrystalEntity> {
 	}
 
 	public void render(CrystalEntity crystalEntity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i) {
+		float customSpeed = SPEED;
+		if (crystalEntity.isPowered()) customSpeed = 4.0F;
+
 		matrixStack.push();
-		float j = ((float)crystalEntity.crystalAge + g) * SPEED;
+		float j = ((float)crystalEntity.crystalAge + g) * customSpeed;
 		VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(CRYSTAL_RENDER);
 		matrixStack.push();
 		

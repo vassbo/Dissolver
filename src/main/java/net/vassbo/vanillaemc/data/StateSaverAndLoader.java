@@ -10,6 +10,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.world.PersistentState;
 import net.minecraft.world.PersistentStateManager;
 import net.minecraft.world.World;
@@ -140,6 +141,39 @@ public class StateSaverAndLoader extends PersistentState {
         return state;
     }
 
+    // GLOBAL
+
+    public static PlayerData getGlobalData(MinecraftServer server) {
+        StateSaverAndLoader serverState = getServerState(server);
+        return serverState.sharedData;
+    }
+
+    public static void setGlobalEMC(MinecraftServer server, int emc) {
+        StateSaverAndLoader serverState = getServerState(server);
+        PlayerData globalData = serverState.sharedData;
+
+        globalData.EMC = emc;
+        serverState.sharedData = globalData;
+
+        updateAllServerPlayers(server);
+    }
+
+    public static void setGlobalLearned(MinecraftServer server, List<String> learnedList) {
+        StateSaverAndLoader serverState = getServerState(server);
+        PlayerData globalData = serverState.sharedData;
+
+        globalData.LEARNED_ITEMS = learnedList;
+        serverState.sharedData = globalData;
+
+        updateAllServerPlayers(server);
+    }
+
+    private static void updateAllServerPlayers(MinecraftServer server) {
+        for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
+            EMCHelper.sendStateToClient((PlayerEntity)player);
+        }
+    }
+
     // PLAYER MANAGER
 
     private static Type<StateSaverAndLoader> type = new Type<>(
@@ -196,11 +230,7 @@ public class StateSaverAndLoader extends PersistentState {
         }
 
         playerState.EMC = emc;
-        
-        if (ModConfig.PRIVATE_EMC) serverState.players.put(player.getUuid(), playerState);
-        else serverState.sharedData = playerState;
-
-        EMCHelper.sendStateToClient((PlayerEntity)player);
+        updateState(player, serverState, playerState);
     }
 
     public static void setPlayerLearned(LivingEntity player, List<String> learnedList) {
@@ -210,11 +240,17 @@ public class StateSaverAndLoader extends PersistentState {
         PlayerData playerState = getPlayerState(player, serverState);
 
         playerState.LEARNED_ITEMS = learnedList;
+        updateState(player, serverState, playerState);
+    }
 
-        if (ModConfig.PRIVATE_EMC) serverState.players.put(player.getUuid(), playerState);
-        else serverState.sharedData = playerState;
-
-        EMCHelper.sendStateToClient((PlayerEntity)player);
+    private static void updateState(LivingEntity player, StateSaverAndLoader serverState, PlayerData playerState) {
+        if (ModConfig.PRIVATE_EMC) {
+            serverState.players.put(player.getUuid(), playerState);
+            EMCHelper.sendStateToClient((PlayerEntity)player);
+        } else {
+            serverState.sharedData = playerState;
+            updateAllServerPlayers(player.getServer());
+        }
     }
 
     public static PlayerData getFromUuid(MinecraftServer server, UUID uuid) {

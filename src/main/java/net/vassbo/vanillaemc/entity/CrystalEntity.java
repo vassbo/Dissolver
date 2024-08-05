@@ -5,6 +5,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 public class CrystalEntity extends Entity {
@@ -21,6 +23,14 @@ public class CrystalEntity extends Entity {
 	// 	this.setPosition(x, y, z);
 	// }
 
+	public boolean isPowered() {
+		Vec3d pos = this.getPos();
+		World world = this.getWorld();
+		BlockPos blockPos = new BlockPos((int)pos.x - 1, (int)pos.y - 1, (int)pos.z - 1);
+
+		return world.isReceivingRedstonePower(blockPos);
+	}
+
 	@Override
 	protected Entity.MoveEffect getMoveEffect() {
 		return Entity.MoveEffect.NONE;
@@ -35,6 +45,7 @@ public class CrystalEntity extends Entity {
 		this.crystalAge++;
 		this.checkBlockCollision();
 		this.tickPortalTeleportation();
+		// this.isPowered();
 	}
 
 	@Override
