@@ -476,7 +476,7 @@ public class EMCValues {
         EMC_VALUES.put(blockName, value);
     }
 
-    private static void setEMC(
+    protected static void setEMC(
         String resultId,
         int emcValue
     ) {
@@ -484,7 +484,7 @@ public class EMCValues {
         setEMCUnchecked(resultId, emcValue);
     }
 
-    private static void setEMC(HashMap<String, Integer> NEW_EMC_VALUES) {
+    protected static void setEMC(HashMap<String, Integer> NEW_EMC_VALUES) {
         //TODO allow no overrides
         EMC_VALUES.putAll(NEW_EMC_VALUES);
     }
