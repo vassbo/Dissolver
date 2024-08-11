@@ -1,7 +1,7 @@
-package net.vassbo.vanillaemc.data;
+package net.vassbo.vanillaemc;
 
-public class Constants {
-    enum Modes {
+public class TestConstants {
+    public enum Modes {
         DEFAULT("default"),
         MOCK_SKYBLOCK("MockskyblockMode");
 
