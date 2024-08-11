@@ -7,7 +7,10 @@ import java.util.List;
 
 public class EMCExpected {
 
-    public static List<EMCRecord> standard() {
+    /**
+     * Helper that does not include dirt to allow testing overrides of the standard set
+     */
+    public static List<EMCRecord> common(){
         return Arrays.asList(
             new EMCRecord("minecraft:burn_pottery_sherd", 2500),
             new EMCRecord("minecraft:music_disc_stal", 8000),
@@ -139,7 +142,6 @@ public class EMCExpected {
             new EMCRecord("minecraft:crimson_fungus", 2),
             new EMCRecord("minecraft:purple_dye", 8),
             new EMCRecord("minecraft:arms_up_pottery_sherd", 2500),
-            new EMCRecord("minecraft:dirt", 1),
             new EMCRecord("minecraft:sea_pickle", 5),
             new EMCRecord("minecraft:weathered_copper", 2144),
             new EMCRecord("minecraft:exposed_chiseled_copper", 864),
@@ -343,6 +345,15 @@ public class EMCExpected {
             new EMCRecord("minecraft:host_armor_trim_smithing_template", 9200)
         );
     }
+
+    public static List<EMCRecord> standard() {
+        List<EMCRecord> list = common();
+        list.add(
+            new EMCRecord("minecraft:dirt", 1)
+        );
+        return list;
+    }
+
     public static List<EMCRecord> skyblocks(){
         return Arrays.asList(
             new EMCRecord("minecraft:burn_pottery_sherd", 2500),

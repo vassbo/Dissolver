@@ -3,6 +3,9 @@ package net.vassbo.vanillaemc.config;
 import com.mojang.datafixers.util.Pair;
 
 import net.vassbo.vanillaemc.VanillaEMC;
+import net.vassbo.vanillaemc.data.model.EMCRecord;
+
+import java.util.List;
 
 public class ModConfig {
     public static SimpleConfig CONFIG;
@@ -13,6 +16,7 @@ public class ModConfig {
     public static boolean CREATIVE_ITEMS;
     public static String DIFFICULTY;
     public static String MODE;
+    public static List<EMCRecord> EMC_OVERRIDES;
 
     public static void init() {
         configs = new ModConfigProvider();
