@@ -2,6 +2,7 @@ package net.vassbo.vanillaemc.data;
 
 import net.vassbo.vanillaemc.data.model.EMCRecord;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -347,7 +348,7 @@ public class EMCExpected {
     }
 
     public static List<EMCRecord> standard() {
-        List<EMCRecord> list = common();
+        List<EMCRecord> list = new ArrayList<>(common());
         list.add(
             new EMCRecord("minecraft:dirt", 1)
         );
