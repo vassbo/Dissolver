@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Set;
 
 import static net.vassbo.vanillaemc.data.EMCExpected.common;
+import static net.vassbo.vanillaemc.data.EMCExpected.skyblocks;
+import static net.vassbo.vanillaemc.data.EMCExpected.standard;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class EMCValuesTest {
@@ -37,7 +39,7 @@ class EMCValuesTest {
             VisibilityModifier.setEMC(resultId, emcValue);
         }
 
-        public static void __setEMC(HashMap<String, Integer> NEW_EMC_VALUES) {
+        public void __setEMC(HashMap<String, Integer> NEW_EMC_VALUES) {
             VisibilityModifier.setEMC(NEW_EMC_VALUES);
         }
 
@@ -56,61 +58,44 @@ class EMCValuesTest {
             .CONFIG_OVERRIDDEN()
             .clear();//same pattern
 
+        //flush config that effects this class
         ModConfig.EMC_OVERRIDES = null;
         ModConfig.MODE = null;
     }
 
+    //DEFAULT NO CONFIG OVERRIDES
 
     @Test
-    void able_to_change_emc_simple_new() {
-        test_init_default();
-
-        //that we setup correctly
-        assertThat(EMCValues.get(TEST_CASE_EMC_RECORD.getBlockName())).as("setup "+TEST_CASE).isEqualTo(0);
-
-        underTest.__setEMC(TEST_CASE, 100);
-
-        //does not change check
-        assertThat(EMCValues.get(TEST_CASE_EMC_RECORD.getBlockName())).as("mutable "+TEST_CASE).isEqualTo(100);
+    void test_init_default() {
+        ModConfig.MODE = TestConstants.Modes.DEFAULT.getValue();
+        EMCValues.init();
 
 
-        underTest.__setEMC(TEST_CASE, 1);
-
-        //does not change check
-        assertThat(EMCValues.get(TEST_CASE_EMC_RECORD.getBlockName())).as("mutable second pass "+TEST_CASE).isEqualTo(1);
+        validateEMCValues(standard());
     }
 
     @Test
-    void able_to_change_emc_simple_locked() {
-        test_init_overrides();
+    void test_init_skyblocks() {
+        ModConfig.MODE = TestConstants.Modes.MOCK_SKYBLOCK.getValue();
+        EMCValues.init();
 
-        //that we setup correctly
-        assertThat(EMCValues.get(TEST_CASE_EMC_RECORD.getBlockName())).as("setup "+TEST_CASE).isEqualTo(TEST_CASE_EMC_RECORD.getEmc());
-
-        underTest.__setEMC(TEST_CASE, 100);
-
-        //does not change check
-        assertThat(EMCValues.get(TEST_CASE_EMC_RECORD.getBlockName())).as("immutable "+TEST_CASE).isEqualTo(TEST_CASE_EMC_RECORD.getEmc());
+        validateEMCValues(skyblocks());
     }
 
+    // Test CONFIG OVERRIDES
+
     @Test
-    void able_to_change_emc_simple_deleted() {
-        test_init_overrides_dirt_has_no_emc();
-
-        //that we setup correctly
-        assertThat(EMCValues.get(MINECRAFT_DIRT)).as("setup "+TEST_CASE).isEqualTo(0);
-
-        underTest.__setEMC(MINECRAFT_DIRT, 100);
-
-        //does not change check
-        assertThat(EMCValues.get(MINECRAFT_DIRT)).as("immutable "+TEST_CASE).isEqualTo(0);
+    void test_init_simple_config_override() {
+        testCommon(List.of(
+            //Test adding a new item
+            TEST_CASE_EMC_RECORD), standard());
     }
 
 
     @Test
     void test_init_overrides() {
 
-        ModConfig.EMC_OVERRIDES = Arrays.asList(
+        List<EMCRecord> overrides = Arrays.asList(
             //Test adding a new item
             TEST_CASE_EMC_RECORD,
 
@@ -118,58 +103,133 @@ class EMCValuesTest {
             new EMCRecord(MINECRAFT_DIRT, 10)
         );
 
-        ModConfig.MODE = TestConstants.Modes.DEFAULT.getValue();
-        EMCValues.init();
-
-        List<EMCRecord> list = new ArrayList<>(common());
-
-        list.add(new EMCRecord(TEST_CASE, 4));
-        list.add(new EMCRecord(MINECRAFT_DIRT, 10));
-
-        validateEMCValues(list);
+        testCommon(overrides, common());
     }
 
     @Test
     void test_init_overrides_dirt_has_no_emc() {
 
-        ModConfig.EMC_OVERRIDES = Arrays.asList(
+        testCommon(Arrays.asList(
             //Test adding a new item
-            new EMCRecord(TEST_CASE, 4),
+            TEST_CASE_EMC_RECORD,
 
             //Test adding an override
             new EMCRecord(MINECRAFT_DIRT, 0)
-        );
+        ), List.of(TEST_CASE_EMC_RECORD), common());
+    }
 
-        ModConfig.MODE = TestConstants.Modes.DEFAULT.getValue();
-        EMCValues.init();
+    // Test that overrides are locked in
 
-        List<EMCRecord> list = new ArrayList<>(common());
+    @Test
+    void able_to_change_emc_simple_new() {
+        test_init_default();
 
-        list.add(new EMCRecord(TEST_CASE, 4));
-        //Note, the lack of dirt
+        //that we setup correctly
+        assertThat(EMCValues.get(TEST_CASE_EMC_RECORD.getBlockName()))
+            .as("setup " + TEST_CASE)
+            .isEqualTo(0);
 
-        validateEMCValues(list);
+        underTest.__setEMC(TEST_CASE, 100);
+
+        //does not change check
+        assertThat(EMCValues.get(TEST_CASE_EMC_RECORD.getBlockName()))
+            .as("mutable " + TEST_CASE)
+            .isEqualTo(100);
+
+
+        underTest.__setEMC(TEST_CASE, 1);
+
+        //does not change check
+        assertThat(EMCValues.get(TEST_CASE_EMC_RECORD.getBlockName()))
+            .as("mutable second pass " + TEST_CASE)
+            .isEqualTo(1);
     }
 
     @Test
-    void test_init_default() {
+    void able_to_change_emc_simple_locked() {
+        test_init_overrides();
 
+        //that we setup correctly
+        assertThat(EMCValues.get(TEST_CASE_EMC_RECORD.getBlockName()))
+            .as("setup " + TEST_CASE)
+            .isEqualTo(TEST_CASE_EMC_RECORD.getEmc());
 
-        ModConfig.MODE = TestConstants.Modes.DEFAULT.getValue();
-        EMCValues.init();
+        underTest.__setEMC(TEST_CASE, 100);
 
-
-        validateEMCValues(EMCExpected.standard());
+        //does not change check
+        assertThat(EMCValues.get(TEST_CASE_EMC_RECORD.getBlockName()))
+            .as("immutable " + TEST_CASE)
+            .isEqualTo(TEST_CASE_EMC_RECORD.getEmc());
     }
 
     @Test
-    void test_init_skyblocks() {
+    void able_to_change_emc_simple_deleted() {
+        test_init_overrides_dirt_has_no_emc();
+
+        //that we setup correctly
+        assertThat(EMCValues.get(MINECRAFT_DIRT))
+            .as("setup " + MINECRAFT_DIRT)
+            .isEqualTo(0);
+
+        underTest.__setEMC(MINECRAFT_DIRT, 100);
+
+        //does not change check
+        assertThat(EMCValues.get(MINECRAFT_DIRT))
+            .as("immutable " + MINECRAFT_DIRT)
+            .isEqualTo(0);
+    }
 
 
-        ModConfig.MODE = TestConstants.Modes.MOCK_SKYBLOCK.getValue();
-        EMCValues.init();
+    @Test
+    void test_setEMC_COLLECTION_NULLSAFE() {
 
-        validateEMCValues(EMCExpected.skyblocks());
+        test_init_simple_config_override();
+
+        underTest.__setEMC(null);
+
+        assertThat(EMCValues.get(TEST_CASE_EMC_RECORD.getBlockName()))
+            .as(TEST_CASE)
+            .isEqualTo(TEST_CASE_EMC_RECORD.getEmc());
+
+    }
+
+    @Test
+    void test_setEMC_COLLECTION_emptysafe() {
+
+        test_init_simple_config_override();
+
+        HashMap<String, Integer> map = new HashMap<>();
+
+        underTest.__setEMC(map);
+
+        assertThat(EMCValues.get(TEST_CASE_EMC_RECORD.getBlockName()))
+            .as(TEST_CASE)
+            .isEqualTo(TEST_CASE_EMC_RECORD.getEmc());
+
+    }
+
+    @Test
+    void test_setEMC_COLLECTION() {
+
+        test_init_simple_config_override();
+
+        HashMap<String, Integer> map = new HashMap<>();
+        map.put(TEST_CASE_EMC_RECORD.getBlockName(), 100);
+        map.put(MINECRAFT_DIRT, 200);
+
+
+        underTest.__setEMC(map);
+
+        assertThat(EMCValues.get(MINECRAFT_DIRT))
+            .as("mutable " + MINECRAFT_DIRT)
+            .isEqualTo(200);
+
+        assertThat(EMCValues.get(TEST_CASE_EMC_RECORD.getBlockName()))
+            .as("immutable " + TEST_CASE)
+            .isEqualTo(TEST_CASE_EMC_RECORD.getEmc());
+
+
+
     }
 
 
@@ -183,6 +243,30 @@ class EMCValuesTest {
                 .as("EMC Value of " + emcRecord.getBlockName())
                 .isEqualTo(emcRecord.getEmc());
         }
+    }
+
+    private void testCommon(
+        List<EMCRecord> overrides,
+        List<EMCRecord> baseSet
+    ) {
+        testCommon(overrides, overrides, baseSet);
+    }
+
+    private void testCommon(
+        List<EMCRecord> overrides,
+        List<EMCRecord> expected,
+        List<EMCRecord> baseSet
+    ) {
+        ModConfig.EMC_OVERRIDES = overrides;
+
+        ModConfig.MODE = TestConstants.Modes.DEFAULT.getValue();
+        EMCValues.init();
+
+        List<EMCRecord> list = new ArrayList<>(baseSet);
+
+        list.addAll(expected);
+
+        validateEMCValues(list);
     }
 
 }

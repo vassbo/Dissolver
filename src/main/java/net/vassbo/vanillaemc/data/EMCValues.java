@@ -243,7 +243,7 @@ public class EMCValues {
         setEMCUnchecked("minecraft:zombie_head", 10000);
         setEMCUnchecked("minecraft:player_head", 12000);
         // armor
-        int CHAINMAIL = (int)(IRON * 0.8); // CUSTOM VALUE
+        int CHAINMAIL = (int) (IRON * 0.8); // CUSTOM VALUE
         setEMCUnchecked("minecraft:chainmail_helmet", CHAINMAIL * 5);
         setEMCUnchecked("minecraft:chainmail_chestplate", CHAINMAIL * 8);
         setEMCUnchecked("minecraft:chainmail_leggings", CHAINMAIL * 7);
@@ -251,7 +251,7 @@ public class EMCValues {
         setEMCUnchecked("minecraft:diamond_horse_armor", (int) (DIAMOND * 1.2));
         setEMCUnchecked("minecraft:golden_horse_armor", (int) (GOLD * 1.2));
         setEMCUnchecked("minecraft:iron_horse_armor", (int) (IRON * 1.2));
-        int NETHERITE_INGOT = (int)(ANCIENT_DEBRIS * 4.455);
+        int NETHERITE_INGOT = (int) (ANCIENT_DEBRIS * 4.455);
         setEMCUnchecked("minecraft:netherite_sword", NETHERITE_INGOT + (DIAMOND * 2) + 2);
         setEMCUnchecked("minecraft:netherite_pickaxe", NETHERITE_INGOT + (DIAMOND * 3) + (2 * 2));
         setEMCUnchecked("minecraft:netherite_axe", NETHERITE_INGOT + (DIAMOND * 3) + (2 * 2));
@@ -293,7 +293,7 @@ public class EMCValues {
             setEMCUnchecked("minecraft:spawner", 400000);
             setEMCUnchecked("minecraft:budding_amethyst", 8000);
         }
-        
+
         // EMC_VALUES.put("minecraft:filled_map", 1300); // same as empty map (this does nothing)
 
         // infested (should not be obtainable)
@@ -304,7 +304,7 @@ public class EMCValues {
         // EMC_VALUES.put("minecraft:infested_cracked_stone_bricks", 1);
         // EMC_VALUES.put("minecraft:infested_stone_bricks", 1);
         // EMC_VALUES.put("minecraft:infested_mossy_stone_bricks", 1);
-        
+
         // DOES NOT WORK BECAUSE OF NBT DATA
         // EMC_VALUES.put("minecraft:disc_fragment_5", 800);
         // EMC_VALUES.put("minecraft:axolotl_bucket", BUCKET + 70);
@@ -365,10 +365,12 @@ public class EMCValues {
             copperIndex++;
             for (String type : copper_types) {
                 int value = COPPER * (type == "block" ? 9 : 6) + (copperIndex * 100);
-                if (state != "") setEMCUnchecked(
-                    "minecraft:" + state + "copper" + (type != "block" ? "_" + type : ""),
-                    value / (type == "door" ? 3 : type == "trapdoor" ? 2 : 1)
-                );
+                if (state != "") {
+                    setEMCUnchecked(
+                        "minecraft:" + state + "copper" + (type != "block" ? "_" + type : ""),
+                        value / (type == "door" ? 3 : type == "trapdoor" ? 2 : 1)
+                    );
+                }
                 // EMC_VALUES.put("minecraft:waxed_" + state + "copper" + (type != "block" || state == "" ? "_" + type : ""), value + 12);
             }
         }
@@ -385,7 +387,7 @@ public class EMCValues {
                     "minecraft:dead_" + block + "_coral" + type, CORAL / (Objects.equals(type, "_block") ? 1 : 2));
             }
         }
-        
+
         // saplings
         List<String> saplings = Arrays.asList("oak", "spruce", "birch", "jungle", "acacia", "dark_oak", "cherry");
         for (String sapling : saplings) {
@@ -394,7 +396,10 @@ public class EMCValues {
 
         // shulker boxes & dyes
         int SHULKER_BOX = LOGS * 2 + (SHULKER_SHELL * 2);
-        List<String> colors = Arrays.asList("black", "blue", "brown", "cyan", "gray", "green", "light_blue", "light_gray", "lime", "magenta", "orange", "pink", "purple", "red", "white", "yellow");
+        List<String> colors = Arrays.asList(
+            "black", "blue", "brown", "cyan", "gray", "green", "light_blue", "light_gray", "lime", "magenta", "orange",
+            "pink", "purple", "red", "white", "yellow"
+        );
         for (String color : colors) {
             setEMCUnchecked("minecraft:" + color + "_shulker_box", SHULKER_BOX);
             setEMCUnchecked("minecraft:" + color + "_dye", FLOWERS);
@@ -403,14 +408,21 @@ public class EMCValues {
 
         // music discs
         int MUSIC_DISC = 8000;
-        List<String> discs = Arrays.asList("mall", "chirp", "wait", "strad", "creator", "far", "cat", "ward", "blocks", "otherside", "relic", "11", "mellohi", "pigstep", "13", "stal", "creator_music_box", "precipice", "5");
+        List<String> discs = Arrays.asList(
+            "mall", "chirp", "wait", "strad", "creator", "far", "cat", "ward", "blocks", "otherside", "relic", "11",
+            "mellohi", "pigstep", "13", "stal", "creator_music_box", "precipice", "5"
+        );
         for (String disc : discs) {
             setEMCUnchecked("minecraft:music_disc_" + disc, MUSIC_DISC);
         }
 
         // pottery sherds
         int POTTERY_SHERD = 2500;
-        List<String> sherds = Arrays.asList("brewer", "blade", "burn", "archer", "arms_up", "shelter", "howl", "heartbreak", "scrape", "guster", "explorer", "miner", "plenty", "heart", "skull", "flow", "sheaf", "danger", "prize", "friend", "mourner", "angler", "snort");
+        List<String> sherds = Arrays.asList(
+            "brewer", "blade", "burn", "archer", "arms_up", "shelter", "howl", "heartbreak", "scrape", "guster",
+            "explorer", "miner", "plenty", "heart", "skull", "flow", "sheaf", "danger", "prize", "friend", "mourner",
+            "angler", "snort"
+        );
         for (String sherd : sherds) {
             setEMCUnchecked("minecraft:" + sherd + "_pottery_sherd", POTTERY_SHERD);
         }
@@ -418,7 +430,10 @@ public class EMCValues {
         // smithing templates (change based on rarity?)
         int SMITHING_TEMPLATE = 9200;
         setEMCUnchecked("minecraft:netherite_upgrade_smithing_template", SMITHING_TEMPLATE + 500);
-        List<String> smithing_templates = Arrays.asList("wayfinder", "wild", "coast", "shaper", "snout", "sentry", "spire", "raiser", "tide", "vex", "ward", "bolt", "silence", "eye", "dune", "host", "rib", "flow");
+        List<String> smithing_templates = Arrays.asList(
+            "wayfinder", "wild", "coast", "shaper", "snout", "sentry", "spire", "raiser", "tide", "vex", "ward", "bolt",
+            "silence", "eye", "dune", "host", "rib", "flow"
+        );
         for (String template : smithing_templates) {
             setEMCUnchecked("minecraft:" + template + "_armor_trim_smithing_template", SMITHING_TEMPLATE);
         }
@@ -435,7 +450,7 @@ public class EMCValues {
     }
 
     private static void loadConfig() {
-        if(ModConfig.EMC_OVERRIDES == null || ModConfig.EMC_OVERRIDES.isEmpty() ){
+        if (ModConfig.EMC_OVERRIDES == null || ModConfig.EMC_OVERRIDES.isEmpty()) {
             VanillaEMC.LOGGER.debug("No EMC Overrides");
             return;
         }
@@ -486,24 +501,32 @@ public class EMCValues {
 
     protected static void setEMC(HashMap<String, Integer> NEW_EMC_VALUES) {
         //TODO allow no overrides
+        if (NEW_EMC_VALUES == null) {
+            return;
+        }
         EMC_VALUES.putAll(NEW_EMC_VALUES);
     }
 
     private static boolean tags_loaded = false;
+
     public static void tagsLoaded(HashMap<String, Integer> NEW_EMC_VALUES) {
         setEMC(NEW_EMC_VALUES);
         tags_loaded = true;
 
-        if (tags_loaded && !RECIPES.isEmpty()) startQuery();
+        if (tags_loaded && !RECIPES.isEmpty()) {startQuery();}
     }
 
     private static HashMap<String, List<String>> RECIPES = new HashMap<String, List<String>>();
     private static List<String> STONE_CUTTER_LIST = new ArrayList<>();
-    public static void recipesLoaded(HashMap<String, List<String>> recipes, List<String> stonecutter) {
+
+    public static void recipesLoaded(
+        HashMap<String, List<String>> recipes,
+        List<String> stonecutter
+    ) {
         RECIPES = recipes;
         STONE_CUTTER_LIST = stonecutter;
 
-        if (tags_loaded && !RECIPES.isEmpty()) startQuery();
+        if (tags_loaded && !RECIPES.isEmpty()) {startQuery();}
     }
 
     private static void startQuery() {
@@ -511,9 +534,17 @@ public class EMCValues {
         queryRecipes(RECIPES);
     }
 
-    private static List<String> unused = Arrays.asList("minecraft:filled_map", "minecraft:tipped_arrow", "minecraft:debug_stick", "minecraft:small_amethyst_bud", "minecraft:large_amethyst_bud", "minecraft:disc_fragment_5", "minecraft:petrified_oak_slab", "minecraft:suspicious_stew", "minecraft:bundle", "minecraft:enchanted_book", "minecraft:air", "minecraft:ominous_bottle", "minecraft:structure_void", "minecraft:chipped_anvil", "minecraft:firework_star", "minecraft:knowledge_book", "minecraft:light", "minecraft:written_book", "minecraft:damaged_anvil", "minecraft:medium_amethyst_bud");
+    private static List<String> unused = Arrays.asList(
+        "minecraft:filled_map", "minecraft:tipped_arrow", "minecraft:debug_stick", "minecraft:small_amethyst_bud",
+        "minecraft:large_amethyst_bud", "minecraft:disc_fragment_5", "minecraft:petrified_oak_slab",
+        "minecraft:suspicious_stew", "minecraft:bundle", "minecraft:enchanted_book", "minecraft:air",
+        "minecraft:ominous_bottle", "minecraft:structure_void", "minecraft:chipped_anvil", "minecraft:firework_star",
+        "minecraft:knowledge_book", "minecraft:light", "minecraft:written_book", "minecraft:damaged_anvil",
+        "minecraft:medium_amethyst_bud"
+    );
     static int previousCompletedSize = 0;
     static int loops = 0;
+
     public static void queryRecipes(HashMap<String, List<String>> RECIPES) {
         loops++;
         for (Map.Entry<String, List<String>> recipe : RECIPES.entrySet()) {
@@ -531,37 +562,54 @@ public class EMCValues {
             RECIPE_ITEM_VALUES.forEach((resultId, emcValues) -> {
                 int emcValue = getAverage(emcValues);
                 // mostly stonecutter items!
-                boolean ignored = resultId.contains("dye") || resultId.contains("copper") || resultId.contains("painting");
-                if (emcValues.size() > 1 && !STONE_CUTTER_LIST.contains(resultId) && !HAS_MULTIPLE.contains(resultId) && !ignored) {
+                boolean ignored = resultId.contains("dye") || resultId.contains("copper") ||
+                    resultId.contains("painting");
+                if (emcValues.size() > 1 && !STONE_CUTTER_LIST.contains(resultId) && !HAS_MULTIPLE.contains(resultId) &&
+                    !ignored) {
                     String blockName = ItemHelper.getName(ItemHelper.getById(resultId));
-                    VanillaEMC.LOGGER.info("Found item with multiple different recipes: " + blockName + ". Using average: " + emcValue + " " + emcValues);
+                    VanillaEMC.LOGGER.info(
+                        "Found item with multiple different recipes: " + blockName + ". Using average: " + emcValue +
+                            " " + emcValues);
                     HAS_MULTIPLE.add(resultId);
                 }
                 setEMC(resultId, emcValue);
 
                 // add dynamic
-                if (resultId.contains("concrete_powder"))
+                if (resultId.contains("concrete_powder")) {
                     setEMC(resultId.substring(0, resultId.indexOf("_powder")), emcValue + 20);
+                }
             });
             // if (HAS_MULTIPLE.size() > 0) VanillaEMC.LOGGER.info("FOUND " + (HAS_MULTIPLE.size()) + " ITEMS WITH MULTIPLE DIFFERENT VALUES!");
 
             // LOG ITEMS WITH MISSING EMC - that does not have a crafting recipe!
             for (String missing : MISSING) {
-                if (!COMPLETED.contains(missing) && !unused.contains(missing)) VanillaEMC.LOGGER.info("FOUND ITEM WITH NO RECIPE AND NO EMC: " + ItemHelper.getName(ItemHelper.getById(missing)) + " (" + missing + ")");
+                if (!COMPLETED.contains(missing) && !unused.contains(missing)) {
+                    VanillaEMC.LOGGER.info(
+                        "FOUND ITEM WITH NO RECIPE AND NO EMC: " + ItemHelper.getName(ItemHelper.getById(missing)) +
+                            " (" + missing + ")");
+                }
             }
 
             int NOT_FOUND = 0;
             for (RegistryKey<Item> item : Registries.ITEM.getKeys()) {
-                String itemId = item.getValue().toString();
-                if (!checkItem(itemId)) NOT_FOUND++;
+                String itemId = item
+                    .getValue()
+                    .toString();
+                if (!checkItem(itemId)) {NOT_FOUND++;}
             }
 
             // VanillaEMC.LOGGER.info("FOUND " + (NOT_FOUND.size()) + " ITEMS WITH NO EMC!");
-            VanillaEMC.LOGGER.info("Loaded EMC values for " + EMC_VALUES.size() + " recipes! Could not find value for " + NOT_FOUND + " items.");
+            VanillaEMC.LOGGER.info(
+                "Loaded EMC values for " + EMC_VALUES.size() + " recipes! Could not find value for " + NOT_FOUND +
+                    " items.");
         }
     }
 
-    private static List<String> creative_items = Arrays.asList("spawn_egg", "command_block", "bedrock", "barrier", "structure_block", "jigsaw", "spawner", "vault", "end_portal_frame", "budding_amethyst", "reinforced_deepslate");
+    private static List<String> creative_items = Arrays.asList(
+        "spawn_egg", "command_block", "bedrock", "barrier", "structure_block", "jigsaw", "spawner", "vault",
+        "end_portal_frame", "budding_amethyst", "reinforced_deepslate"
+    );
+
     private static boolean checkItem(String itemId) {
         // add dynamic (creative items)
         if (ModConfig.CREATIVE_ITEMS) {
@@ -572,11 +620,13 @@ public class EMCValues {
         }
 
         for (String itemPart : creative_items) {
-            if (itemId.contains(itemPart)) return true;
+            if (itemId.contains(itemPart)) {return true;}
         }
 
-        if (!EMC_VALUES.containsKey(itemId) && !unused.contains(itemId) && !itemId.contains("bucket") && !itemId.contains("potion") && !itemId.contains("infested_") && itemId != "minecraft:air") {
-            VanillaEMC.LOGGER.info("No EMC value for item: " + ItemHelper.getName(ItemHelper.getById(itemId)) + " (" + itemId + ")");
+        if (!EMC_VALUES.containsKey(itemId) && !unused.contains(itemId) && !itemId.contains("bucket") &&
+            !itemId.contains("potion") && !itemId.contains("infested_") && itemId != "minecraft:air") {
+            VanillaEMC.LOGGER.info(
+                "No EMC value for item: " + ItemHelper.getName(ItemHelper.getById(itemId)) + " (" + itemId + ")");
             return false;
         }
 
@@ -589,16 +639,17 @@ public class EMCValues {
             .mapToDouble(a -> a)
             .average();
 
-        return (int)(average.isPresent() ? average.getAsDouble() : 0); 
+        return (int) (average.isPresent() ? average.getAsDouble() : 0);
     }
 
     private static final List<String> COMPLETED = new ArrayList<String>();
     private static final List<String> MISSING = new ArrayList<String>();
     private static final HashMap<String, List<Integer>> RECIPE_ITEM_VALUES = new HashMap<String, List<Integer>>();
     private static final HashMap<String, List<String>> PARENTS = new HashMap<String, List<String>>();
+
     private static void checkRecipe(Map.Entry<String, List<String>> recipe) {
         String id = recipe.getKey();
-        if (COMPLETED.contains(id)) return;
+        if (COMPLETED.contains(id)) {return;}
 
         if (EMC_VALUES.containsKey(id.split("__")[0])) {
             COMPLETED.add(id);
@@ -607,7 +658,9 @@ public class EMCValues {
 
         List<String> ingredients = recipe.getValue();
         int totalInputEMC = combineEMC(ingredients);
-        if (totalInputEMC == 0) return; // try again!
+        if (totalInputEMC == 0) {
+            return; // try again!
+        }
 
         COMPLETED.add(id);
 
@@ -618,33 +671,39 @@ public class EMCValues {
 
         // don't allow "children" to change the item they received emc value from
         if (PARENTS.containsKey(resultId)) {
-            if (!RECIPE_ITEM_VALUES.containsKey(resultId) || resultId.contains("copper")) return;
+            if (!RECIPE_ITEM_VALUES.containsKey(resultId) || resultId.contains("copper")) {return;}
 
             // check if emc values are different
-            int previousEMC = RECIPE_ITEM_VALUES.get(resultId).get(0);
+            int previousEMC = RECIPE_ITEM_VALUES
+                .get(resultId)
+                .get(0);
             int newEMC = totalInputEMC / resultCount + extraEMC;
             // round up to 1 if below 1
-            if (newEMC < 1) newEMC = 1;
-            if (previousEMC == newEMC) return;
+            if (newEMC < 1) {newEMC = 1;}
+            if (previousEMC == newEMC) {return;}
 
-            VanillaEMC.LOGGER.info("Found child & parent ITEMS with unmatching EMC values: " + resultId + " - " + PARENTS.get(resultId) + " (THIS COULD RESULT IN INFINITE EMC)!");
+            VanillaEMC.LOGGER.info(
+                "Found child & parent ITEMS with unmatching EMC values: " + resultId + " - " + PARENTS.get(resultId) +
+                    " (THIS COULD RESULT IN INFINITE EMC)!");
             return;
         } else if (ingredients.size() == 1) {
             List<String> children = new ArrayList<>();
             String parentId = ingredients.get(0);
-            if (PARENTS.containsKey(parentId)) children = PARENTS.get(parentId);
+            if (PARENTS.containsKey(parentId)) {children = PARENTS.get(parentId);}
             children.add(resultId);
             PARENTS.put(parentId, children);
         }
 
         List<Integer> values = new ArrayList<>();
-        if (RECIPE_ITEM_VALUES.containsKey(resultId)) values = RECIPE_ITEM_VALUES.get(resultId);
+        if (RECIPE_ITEM_VALUES.containsKey(resultId)) {values = RECIPE_ITEM_VALUES.get(resultId);}
 
         totalInputEMC = totalInputEMC / resultCount + extraEMC; // divide value on output item count
         // round up to 1 if below 1
-        if (totalInputEMC < 1) totalInputEMC = 1;
-        
-        if (values.contains(totalInputEMC)) return; // same value
+        if (totalInputEMC < 1) {totalInputEMC = 1;}
+
+        if (values.contains(totalInputEMC)) {
+            return; // same value
+        }
         values.add(totalInputEMC);
 
         RECIPE_ITEM_VALUES.put(resultId, values);
@@ -658,11 +717,11 @@ public class EMCValues {
             if (emcValue == 0) {
                 // could not get value for all blocks
                 if (!RECIPE_ITEM_VALUES.containsKey(itemId)) {
-                    if (!recipeKeySearch(itemId) && !MISSING.contains(itemId)) MISSING.add(itemId);
+                    if (!recipeKeySearch(itemId) && !MISSING.contains(itemId)) {MISSING.add(itemId);}
                     return 0;
                 }
 
-                if (MISSING.contains(itemId)) MISSING.remove(itemId);
+                if (MISSING.contains(itemId)) {MISSING.remove(itemId);}
                 emcValue = getAverage(RECIPE_ITEM_VALUES.get(itemId));
             }
 
@@ -673,8 +732,10 @@ public class EMCValues {
     }
 
     static private boolean recipeKeySearch(String keyId) {
-        for (String key : RECIPES.keySet()){
-            if (key.contains(keyId)) return true; // keyId__{outputCount}__{extraEMC}__{craftingIndex}
+        for (String key : RECIPES.keySet()) {
+            if (key.contains(keyId)) {
+                return true; // keyId__{outputCount}__{extraEMC}__{craftingIndex}
+            }
         }
 
         return false;
