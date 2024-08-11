@@ -17,7 +17,7 @@ import net.vassbo.vanillaemc.config.ModConfig;
 import net.vassbo.vanillaemc.helpers.ItemHelper;
 
 public class EMCValues {
-    private static final HashMap<String, Integer> EMC_VALUES = new HashMap<String, Integer>();
+    protected static final HashMap<String, Integer> EMC_VALUES = new HashMap<String, Integer>();
     public static final HashMap<String, Integer> EMC_TAG_VALUES = new HashMap<String, Integer>();
 
     public static Integer get(String key) {
