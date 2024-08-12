@@ -2,6 +2,7 @@ package net.vassbo.vanillaemc.config;
 
 import net.fabricmc.loader.api.FabricLoader;
 import net.vassbo.vanillaemc.TestConstants;
+import net.vassbo.vanillaemc.config.model.ConfigConstants;
 import net.vassbo.vanillaemc.config.model.ConfigEntry;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,7 +15,6 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -34,6 +34,20 @@ class ModConfigTest {
     @BeforeEach
     void setUp() {
         underTest = new VisibilityModifier();
+
+        flushConfig();
+    }
+
+    private void flushConfig() {
+        //flush config
+        VisibilityModifier.CONFIG = null;
+        VisibilityModifier.MODE = null;
+        VisibilityModifier.DIFFICULTY = null;
+        VisibilityModifier.EMC_OVERRIDES = null;
+
+        VisibilityModifier.CREATIVE_ITEMS = false;
+        VisibilityModifier.EMC_ON_HUD = false;
+        VisibilityModifier.PRIVATE_EMC = false;
     }
 
     @Test
@@ -64,13 +78,61 @@ class ModConfigTest {
     }
 
     private void checkValues(TestConstants.Configs.Directories directory) {
-//todo
+        switch (directory) {
+            case DEFAULT:
+            case EMPTY:
+
+                assertThat(VisibilityModifier.MODE).isEqualTo(ConfigConstants.MODE
+                    .asConfigEntry()
+                    .getDefault());
+                assertThat(VisibilityModifier.DIFFICULTY).isEqualTo(ConfigConstants.DIFFICULTY
+                    .asConfigEntry()
+                    .getDefault());
+                assertThat(VisibilityModifier.EMC_OVERRIDES).isNull();
+
+                assertThat(VisibilityModifier.CREATIVE_ITEMS).isEqualTo(ConfigConstants.CREATIVE_ITEMS
+                    .asConfigEntry()
+                    .getDefault());
+                assertThat(VisibilityModifier.EMC_ON_HUD).isEqualTo(ConfigConstants.EMC_ON_HUD
+                    .asConfigEntry()
+                    .getDefault());
+                assertThat(VisibilityModifier.PRIVATE_EMC).isEqualTo(ConfigConstants.PRIVATE_EMC
+                    .asConfigEntry()
+                    .getDefault());
+
+                break;
+            case INVERTED:
+
+                assertThat(VisibilityModifier.MODE).isNotEqualTo(ConfigConstants.MODE
+                    .asConfigEntry()
+                    .getDefault());
+                assertThat(VisibilityModifier.DIFFICULTY).isNotEqualTo(ConfigConstants.DIFFICULTY
+                    .asConfigEntry()
+                    .getDefault());
+                assertThat(VisibilityModifier.EMC_OVERRIDES).isNull();
+
+                assertThat(VisibilityModifier.CREATIVE_ITEMS).isNotEqualTo(ConfigConstants.CREATIVE_ITEMS
+                    .asConfigEntry()
+                    .getDefault());
+                assertThat(VisibilityModifier.EMC_ON_HUD).isNotEqualTo(ConfigConstants.EMC_ON_HUD
+                    .asConfigEntry()
+                    .getDefault());
+                assertThat(VisibilityModifier.PRIVATE_EMC).isNotEqualTo(ConfigConstants.PRIVATE_EMC
+                    .asConfigEntry()
+                    .getDefault());
+                break;
+
+            default:
+                throw new AssertionError("Forgot to define the values for directory=" + directory);
+        }
     }
 
-    private void defaultsTest(TestConstants.Configs.Directories directory,
-                              boolean shouldDeleteExistingConfig
+    private void defaultsTest(
+        TestConstants.Configs.Directories directory,
+        boolean shouldDeleteExistingConfig
     ) throws IOException {
-        try (MockedStatic<FabricLoader> staticMock = mockFabricConfigDirectory(directory, shouldDeleteExistingConfig);) {
+        try (MockedStatic<FabricLoader> staticMock = mockFabricConfigDirectory(
+            directory, shouldDeleteExistingConfig);) {
 
             ModConfigProvider expected = new ModConfigProvider();
             expected.addKeyValuePair(new ConfigEntry<>("emc_on_hud", false),
@@ -124,8 +186,9 @@ class ModConfigTest {
         return staticMock;
     }
 
-    private static FabricLoader setUpFabricMock(TestConstants.Configs.Directories directories,
-                                                boolean shouldDelete
+    private static FabricLoader setUpFabricMock(
+        TestConstants.Configs.Directories directories,
+        boolean shouldDelete
     ) {
         Configuration myConfigLocation = getMyConfigLocation(directories);
 
@@ -133,7 +196,7 @@ class ModConfigTest {
             .file()
             .toPath();
 
-        if (shouldDelete &&  myConfigLocation
+        if (shouldDelete && myConfigLocation
             .config()
             .exists()) {
             assertThat(myConfigLocation
