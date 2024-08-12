@@ -4,7 +4,6 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.vassbo.vanillaemc.TestConstants;
 import net.vassbo.vanillaemc.config.model.ConfigConstants;
 import net.vassbo.vanillaemc.config.model.ConfigEntry;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
@@ -211,7 +210,7 @@ class ModConfigTest {
         return mockFabric;
     }
 
-    private static @NotNull Configuration getMyConfigLocation(TestConstants.Configs.Directories directories) {
+    private static Configuration getMyConfigLocation(TestConstants.Configs.Directories directories) {
         File file = new File(directories.getValue());
         File config = new File(file, TestConstants.Configs.FILE_NAME);
         Configuration myConfigLocation = new Configuration(file, config);
