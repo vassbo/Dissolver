@@ -55,8 +55,12 @@ public class RecipeManagerMixin {
 
             Iterator<Map.Entry<Identifier, JsonElement>> recipeIterator = map.entrySet().iterator();
             while (recipeIterator.hasNext()) {
-                Map.Entry<Identifier, JsonElement> entry = recipeIterator.next();
-                getRecipe(entry, registryOps);
+                try {
+                    Map.Entry<Identifier, JsonElement> entry = recipeIterator.next();
+                    getRecipe(entry, registryOps);
+                }catch (Exception e) {
+                    VanillaEMC.LOGGER.error("FOUND RECIPE WITH ISSUE" , e);
+                }
             }
 
             EMCValues.recipesLoaded(RECIPES, STONE_CUTTER_LIST);
