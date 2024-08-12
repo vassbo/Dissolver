@@ -4,6 +4,7 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.vassbo.vanillaemc.TestConstants;
 import net.vassbo.vanillaemc.config.model.ConfigConstants;
 import net.vassbo.vanillaemc.config.model.ConfigEntry;
+import net.vassbo.vanillaemc.data.model.EMCRecord;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
@@ -14,6 +15,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -76,28 +78,35 @@ class ModConfigTest {
         checkValues(directory);
     }
 
+    @Test
+    void init_existing_emc_overrides() throws IOException {
+        TestConstants.Configs.Directories directory = TestConstants.Configs.Directories.OVERRIDES;
+        defaultsTest(directory, false);
+
+        checkValues(directory);
+    }
+
     private void checkValues(TestConstants.Configs.Directories directory) {
         switch (directory) {
             case DEFAULT:
             case EMPTY:
 
-                assertThat(VisibilityModifier.MODE).isEqualTo(ConfigConstants.MODE
-                    .asConfigEntry()
-                    .getDefault());
-                assertThat(VisibilityModifier.DIFFICULTY).isEqualTo(ConfigConstants.DIFFICULTY
-                    .asConfigEntry()
-                    .getDefault());
-                assertThat(VisibilityModifier.EMC_OVERRIDES).isNull();
+                isDefaults();
 
-                assertThat(VisibilityModifier.CREATIVE_ITEMS).isEqualTo(ConfigConstants.CREATIVE_ITEMS
-                    .asConfigEntry()
-                    .getDefault());
-                assertThat(VisibilityModifier.EMC_ON_HUD).isEqualTo(ConfigConstants.EMC_ON_HUD
-                    .asConfigEntry()
-                    .getDefault());
-                assertThat(VisibilityModifier.PRIVATE_EMC).isEqualTo(ConfigConstants.PRIVATE_EMC
-                    .asConfigEntry()
-                    .getDefault());
+                assertThat(VisibilityModifier.EMC_OVERRIDES).isNullOrEmpty();
+
+                break;
+
+            case OVERRIDES:
+
+                isDefaults();
+
+                assertThat(VisibilityModifier.EMC_OVERRIDES).isNotNull().containsAll(Arrays.asList(
+                        new EMCRecord("test:case", 400),
+                        new EMCRecord("minecraft:dirt", 200),
+                        new EMCRecord("minecraft:cobblestone", 300)
+                    )
+                );
 
                 break;
             case INVERTED:
@@ -108,8 +117,6 @@ class ModConfigTest {
                 assertThat(VisibilityModifier.DIFFICULTY).isNotEqualTo(ConfigConstants.DIFFICULTY
                     .asConfigEntry()
                     .getDefault());
-                assertThat(VisibilityModifier.EMC_OVERRIDES).isNull();
-
                 assertThat(VisibilityModifier.CREATIVE_ITEMS).isNotEqualTo(ConfigConstants.CREATIVE_ITEMS
                     .asConfigEntry()
                     .getDefault());
@@ -119,11 +126,32 @@ class ModConfigTest {
                 assertThat(VisibilityModifier.PRIVATE_EMC).isNotEqualTo(ConfigConstants.PRIVATE_EMC
                     .asConfigEntry()
                     .getDefault());
+
+                assertThat(VisibilityModifier.EMC_OVERRIDES).isNullOrEmpty();
+
                 break;
 
             default:
                 throw new AssertionError("Forgot to define the values for directory=" + directory);
         }
+    }
+
+    private void isDefaults() {
+        assertThat(VisibilityModifier.MODE).isEqualTo(ConfigConstants.MODE
+            .asConfigEntry()
+            .getDefault());
+        assertThat(VisibilityModifier.DIFFICULTY).isEqualTo(ConfigConstants.DIFFICULTY
+            .asConfigEntry()
+            .getDefault());
+        assertThat(VisibilityModifier.CREATIVE_ITEMS).isEqualTo(ConfigConstants.CREATIVE_ITEMS
+            .asConfigEntry()
+            .getDefault());
+        assertThat(VisibilityModifier.EMC_ON_HUD).isEqualTo(ConfigConstants.EMC_ON_HUD
+            .asConfigEntry()
+            .getDefault());
+        assertThat(VisibilityModifier.PRIVATE_EMC).isEqualTo(ConfigConstants.PRIVATE_EMC
+            .asConfigEntry()
+            .getDefault());
     }
 
     private void defaultsTest(

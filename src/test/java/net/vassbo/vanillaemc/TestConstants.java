@@ -39,6 +39,17 @@ public class TestConstants {
                     "mode=default # default | skyblock - Changes some EMC values. [default: default]"
                 )),
 
+            /** default file */
+            OVERRIDES("src/test/resources/config/overrides",
+                Arrays.asList("emc_on_hud=false # Display current EMC on HUD (top left corner) [default: false]",
+                    "private_emc=false # Should each player have their own EMC storage? [default: false]",
+                    "creative_items=false # Should creative items have EMC? [default: false]",
+                    "difficulty=hard # easy | normal | hard - Changes crafting recipe for Dissolver block. [default: hard]",
+                    "mode=default # default | skyblock - Changes some EMC values. [default: default]",
+                    "emc:test:case=400",
+                    "emc:minecraft:dirt=200"
+                )),
+
             /** all the booleans are flipped */
             INVERTED("src/test/resources/config/inverted",
                 Arrays.asList("emc_on_hud=true # Display current EMC on HUD (top left corner) [default: false]",
