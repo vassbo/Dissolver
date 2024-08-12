@@ -492,19 +492,25 @@ public class EMCValues {
     }
 
     protected static void setEMC(
-        String resultId,
+        String blockName,
         int emcValue
     ) {
+        if(CONFIG_OVERRIDDEN != null && CONFIG_OVERRIDDEN.contains(blockName)) {
+            //config is locked
+            return;
+        }
+
         //TODO allow no overrides
-        setEMCUnchecked(resultId, emcValue);
+        setEMCUnchecked(blockName, emcValue);
     }
 
     protected static void setEMC(HashMap<String, Integer> NEW_EMC_VALUES) {
-        //TODO allow no overrides
-        if (NEW_EMC_VALUES == null) {
+        if (NEW_EMC_VALUES == null || NEW_EMC_VALUES.isEmpty()) {
             return;
         }
-        EMC_VALUES.putAll(NEW_EMC_VALUES);
+        for (Map.Entry<String, Integer> entry : NEW_EMC_VALUES.entrySet()) {
+            setEMC(entry.getKey(), entry.getValue());
+        }
     }
 
     private static boolean tags_loaded = false;
