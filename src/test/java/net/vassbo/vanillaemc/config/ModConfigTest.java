@@ -39,19 +39,38 @@ class ModConfigTest {
     @Test
     void init_fresh() throws IOException {
         TestConstants.Configs.Directories directory = TestConstants.Configs.Directories.EMPTY;
-        defaultsTest(directory);
+        defaultsTest(directory, true);
+
+        checkValues(directory);
 
     }
 
     @Test
     void init_existing_defaults() throws IOException {
         TestConstants.Configs.Directories directory = TestConstants.Configs.Directories.DEFAULT;
-        defaultsTest(directory);
+        defaultsTest(directory, false);
+
+        checkValues(directory);
 
     }
 
-    private void defaultsTest(TestConstants.Configs.Directories directory) throws IOException {
-        try (MockedStatic<FabricLoader> staticMock = mockFabricConfigDirectory(directory);) {
+
+    @Test
+    void init_existing_inverts() throws IOException {
+        TestConstants.Configs.Directories directory = TestConstants.Configs.Directories.INVERTED;
+        defaultsTest(directory, false);
+
+        checkValues(directory);
+    }
+
+    private void checkValues(TestConstants.Configs.Directories directory) {
+//todo
+    }
+
+    private void defaultsTest(TestConstants.Configs.Directories directory,
+                              boolean shouldDeleteExistingConfig
+    ) throws IOException {
+        try (MockedStatic<FabricLoader> staticMock = mockFabricConfigDirectory(directory, shouldDeleteExistingConfig);) {
 
             ModConfigProvider expected = new ModConfigProvider();
             expected.addKeyValuePair(new ConfigEntry<>("emc_on_hud", false),
@@ -87,15 +106,14 @@ class ModConfigTest {
         Configuration dirActual = getMyConfigLocation(directory);
 
         assertThat(Files.readAllLines(dirActual.config.toPath(), Charset.defaultCharset())).containsAll(
-            Arrays.asList("emc_on_hud=false # Display current EMC on HUD (top left corner) [default: false]",
-                "private_emc=false # Should each player have their own EMC storage? [default: false]",
-                "creative_items=false # Should creative items have EMC? [default: false]",
-                "difficulty=hard # easy | normal | hard - Changes crafting recipe for Dissolver block. [default: hard]",
-                "mode=default # default | skyblock - Changes some EMC values. [default: default]"));
+            directory.getExpectedConfig());
     }
 
-    private static MockedStatic<FabricLoader> mockFabricConfigDirectory(TestConstants.Configs.Directories directories) {
-        return mockFabric(setUpFabricMock(directories));
+    private static MockedStatic<FabricLoader> mockFabricConfigDirectory(
+        TestConstants.Configs.Directories directories,
+        boolean shouldDelete
+    ) {
+        return mockFabric(setUpFabricMock(directories, shouldDelete));
     }
 
     private static MockedStatic<FabricLoader> mockFabric(FabricLoader mockFabric) {
@@ -106,14 +124,16 @@ class ModConfigTest {
         return staticMock;
     }
 
-    private static FabricLoader setUpFabricMock(TestConstants.Configs.Directories directories) {
+    private static FabricLoader setUpFabricMock(TestConstants.Configs.Directories directories,
+                                                boolean shouldDelete
+    ) {
         Configuration myConfigLocation = getMyConfigLocation(directories);
 
         Path path = myConfigLocation
             .file()
             .toPath();
 
-        if (myConfigLocation
+        if (shouldDelete &&  myConfigLocation
             .config()
             .exists()) {
             assertThat(myConfigLocation
