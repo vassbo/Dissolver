@@ -47,7 +47,8 @@ public class TestConstants {
                     "difficulty=hard # easy | normal | hard - Changes crafting recipe for Dissolver block. [default: hard]",
                     "mode=default # default | skyblock - Changes some EMC values. [default: default]",
                     "emc:test:case=400",
-                    "emc:minecraft:dirt=200"
+                    "emc:minecraft:dirt=200",
+                    "emc:cobblestone=300"
                 )),
 
             /** all the booleans are flipped */
