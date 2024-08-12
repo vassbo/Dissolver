@@ -2,6 +2,7 @@ package net.vassbo.vanillaemc.config.model;
 
 import java.util.Objects;
 
+ //consider converting to a record class if defs java21+, We're not really using the generic as is.
 public class ConfigEntry<T> {
 
 

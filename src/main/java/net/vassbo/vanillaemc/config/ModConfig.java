@@ -2,7 +2,6 @@ package net.vassbo.vanillaemc.config;
 
 import net.vassbo.vanillaemc.VanillaEMC;
 import net.vassbo.vanillaemc.config.model.ConfigConstants;
-import net.vassbo.vanillaemc.config.model.ConfigEntry;
 import net.vassbo.vanillaemc.data.model.EMCRecord;
 
 import java.util.List;
@@ -39,5 +38,7 @@ public class ModConfig {
         CREATIVE_ITEMS = CONFIG.getOrDefault("creative_items", false);
         DIFFICULTY = CONFIG.getOrDefault("difficulty", "hard");
         MODE = CONFIG.getOrDefault("mode", "default");
+
+        EMC_OVERRIDES = new EMCOverrideLoader(CONFIG.getConfig(), configs).load();
     }
 }
