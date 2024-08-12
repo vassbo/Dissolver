@@ -1,6 +1,7 @@
 package net.vassbo.vanillaemc.config;
 
-import com.mojang.datafixers.util.Pair;
+
+import net.vassbo.vanillaemc.config.model.ConfigEntry;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,16 +10,16 @@ public class ModConfigProvider implements SimpleConfig.DefaultConfig {
 
     private String configContents = "";
 
-    public List<Pair<String, ?>> getConfigsList() {
+    public List<ConfigEntry<?>> getConfigsList() {
         return configsList;
     }
 
-    private final List<Pair<String, ?>> configsList = new ArrayList<>();
+    private final List<ConfigEntry<?>> configsList = new ArrayList<>();
 
-    public void addKeyValuePair(Pair<String, ?> keyValuePair, String comment) {
+    public void addKeyValuePair(ConfigEntry<?> keyValuePair, String comment) {
         configsList.add(keyValuePair);
-        configContents += keyValuePair.getFirst() + "=" + keyValuePair.getSecond() + " # "
-                + comment + " [default: " + keyValuePair.getSecond() + "]\n";
+        configContents += keyValuePair.getProperty() + "=" + keyValuePair.getDefault() + " # "
+                + comment + " [default: " + keyValuePair.getDefault() + "]\n";
     }
 
     @Override
