@@ -10,6 +10,10 @@ base {
 	archivesName = project.archives_base_name
 }
 
+test {
+	useJUnitPlatform()
+}
+
 repositories {
 	// Add repositories to retrieve artifacts from in here.
 	// You should only use this when depending on other mods because
@@ -38,6 +42,12 @@ dependencies {
 
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+
+	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+	testImplementation 'org.assertj:assertj-core:3.26.3'
+	testImplementation 'org.apache.logging.log4j:log4j-slf4j-impl:2.12.4'
+	testImplementation 'org.mockito:mockito-core:5.12.0'
 	
 }
 

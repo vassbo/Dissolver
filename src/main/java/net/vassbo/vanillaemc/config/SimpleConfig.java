@@ -254,4 +254,10 @@ public class SimpleConfig {
         return request.file.delete();
     }
 
+    /**
+     * Returns a copy of the full config map. Changes made to this copy are written back to the origin map.
+     */
+    public HashMap<String, String> getConfig() {
+        return new HashMap<>(config);
+    }
 }
