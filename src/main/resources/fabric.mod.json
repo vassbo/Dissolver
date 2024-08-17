@@ -2,13 +2,13 @@
     "schemaVersion": 1,
     "id": "vanillaemc",
     "version": "${version}",
-    "name": "VanillaEMC",
-    "description": "Convert items into any stored items based on value (EMC).",
+    "name": "Dissolver",
+    "description": "Convert items into any other stored items based on its value (EMC).",
     "authors": ["Vassbo"],
     "contact": {
-        "homepage": "https://github.com/vassbo/VanillaEMC",
-        "sources": "https://github.com/vassbo/VanillaEMC",
-        "issues": "https://github.com/vassbo/VanillaEMC/issues"
+        "homepage": "https://github.com/vassbo/Dissolver",
+        "sources": "https://github.com/vassbo/Dissolver",
+        "issues": "https://github.com/vassbo/Dissolver/issues"
     },
     "license": "CC0-1.0",
     "icon": "assets/vanillaemc/icon.png",

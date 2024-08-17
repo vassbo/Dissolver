@@ -19,6 +19,7 @@ import net.vassbo.vanillaemc.packets.Packets;
 import net.vassbo.vanillaemc.screen.ModScreenHandlers;
 
 public class VanillaEMC implements ModInitializer {
+	// NOTE: originally called VanillaEMC, but could not have vanilla in the name on SourceForge, so it's Dissolver now!
 	public static final String MOD_ID = "vanillaemc";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
@@ -28,7 +29,7 @@ public class VanillaEMC implements ModInitializer {
 		// For God so loved the world that he gave his one and only Son, that whoever believes in him shall not perish but have eternal life.
 		// John 3:16
 
-		LOGGER.info("Initializing VanillaEMC!");
+		LOGGER.info("Initializing Dissolver (VanillaEMC)!");
 
 		ModConfig.init();
 		RecipeGenerator.init();
